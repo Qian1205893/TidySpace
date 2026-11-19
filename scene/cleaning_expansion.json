@@ -1,0 +1,13 @@
+[
+  {"id":"dust-2","kind":"Dust","position":[-0.77,-0.3194,1.32],"size":[0.58,0.007,0.36]},
+  {"id":"dust-3","kind":"Dust","position":[1.0,-0.3194,2.11],"size":[0.55,0.007,0.40]},
+  {"id":"spill-0","kind":"Spill","position":[-0.92,-0.3190,1.93],"size":[0.46,0.003,0.33]},
+  {"id":"spill-1","kind":"Spill","position":[0.46,-0.3190,1.20],"size":[0.42,0.003,0.55]},
+  {"id":"debris-2","kind":"Debris","position":[0.39,-0.305,2.12],"size":[0.42,0.025,0.26]},
+  {"id":"debris-3","kind":"Debris","position":[-0.61,-0.305,1.75],"size":[0.44,0.025,0.30]},
+  {"id":"debris-4","kind":"Debris","position":[1.855,-0.305,0.35],"size":[0.29,0.025,0.44]},
+  {"id":"trash-3","kind":"Trash","position":[-1.12,-0.26,1.25],"size":[0.095,0.12,0.095]},
+  {"id":"trash-4","kind":"Trash","position":[1.33,-0.27,2.26],"size":[0.08,0.10,0.08]},
+  {"id":"trash-5","kind":"Trash","position":[-0.42,-0.275,1.92],"size":[0.12,0.08,0.10]},
+  {"id":"trash-6","kind":"Trash","position":[1.865,-0.27,-0.40],"size":[0.08,0.10,0.08]}
+]

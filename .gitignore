@@ -1,0 +1,60 @@
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log/OS Files
+*.log
+.DS_Store
+
+# Android Studio generated files and folders
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+output.json
+
+# IntelliJ
+*.iml
+.idea/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+# Keystore files
+*.jks
+*.keystore
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# Android Profiling
+*.hprof
+
+# Local tooling and temporary verification
+.kotlin
+.scratch
+.verification
+__pycache__/
+*.py[cod]
+.env
+.env.*
+*.pem
+*.key
+*.p12
+
+# Spatial Editor caches and per-user workspace state
+scene/.Library/
+scene/.CacheData/
+scene/.Component/
+scene/UserSettings/
+
+# Blender backup copies; keep editable .blend sources
+*.blend[0-9]*
+
+# Generated delivery folders and root runtime captures
+/*-20[0-9][0-9][0-9][0-9][0-9][0-9]/
+/*.png
+/tidyspace-performance-report.html

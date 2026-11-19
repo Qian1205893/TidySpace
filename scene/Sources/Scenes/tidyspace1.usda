@@ -1,0 +1,21 @@
+#usda 1.0
+(
+    customLayerData = {
+        string Copyright = "Copyright 2022 - 2024 PICO. All rights reserved."
+        string RuntimeVersion = "Runtime V6.3.0.0.mol.20261018"
+        string Version = "Spatial Editor V6.2.7"
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 1
+    upAxis = "Y"
+)
+
+def Xform "Root"
+{
+    def "house" (
+        prepend references = @../AI-Asset/pinned-import-model-b1d8a017b8b124b118555132-tidy-renovation.usdz@</ROOT>
+    )
+    {
+    }
+}
+

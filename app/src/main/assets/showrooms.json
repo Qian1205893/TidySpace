@@ -1,0 +1,3453 @@
+{
+  "version": 2,
+  "rooms": [
+    {
+      "id": "green",
+      "title": "阳光植物家",
+      "style": "植物慢生活",
+      "difficulty": "入门",
+      "mood": "晨光",
+      "dayHour": 10,
+      "brightness": 0.68,
+      "brief": "植物慢生活的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_green_daybed",
+          "quantity": 1,
+          "position": [
+            -0.65,
+            -0.155,
+            -0.92
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_green_plantladder",
+          "quantity": 1,
+          "position": [
+            -1.28,
+            -0.04,
+            -0.77
+          ],
+          "yaw": 90,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_green_greenhouse",
+          "quantity": 1,
+          "position": [
+            0.92,
+            0.01,
+            -0.97
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_green_olivetree",
+          "quantity": 1,
+          "position": [
+            1.87,
+            0.015,
+            -0.55
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "diningtable",
+          "quantity": 1,
+          "position": [
+            -0.62,
+            -0.17,
+            -0.27
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_green_wateringcan",
+          "quantity": 1,
+          "position": [
+            -0.725,
+            0.055,
+            -0.27
+          ],
+          "yaw": 0,
+          "support": "diningtable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_green_terrarium",
+          "quantity": 1,
+          "position": [
+            -0.515,
+            0.095,
+            -0.27
+          ],
+          "yaw": 0,
+          "support": "diningtable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "gardenbench",
+          "quantity": 1,
+          "position": [
+            1.86,
+            -0.2025,
+            0.14
+          ],
+          "yaw": -90,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "tallplant",
+          "quantity": 1,
+          "position": [
+            1.12,
+            -0.13,
+            0.22
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "bed",
+          "quantity": 1,
+          "position": [
+            -0.78,
+            -0.18,
+            1.6
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "安静卧室"
+        },
+        {
+          "id": "wardrobe",
+          "quantity": 1,
+          "position": [
+            -0.3,
+            -0.02,
+            1.41
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "安静卧室"
+        },
+        {
+          "id": "sidetable",
+          "quantity": 1,
+          "position": [
+            -1.21,
+            -0.21,
+            1.44
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "安静卧室"
+        },
+        {
+          "id": "tablelamp",
+          "quantity": 1,
+          "position": [
+            -1.21,
+            -0.01,
+            1.44
+          ],
+          "yaw": 0,
+          "support": "sidetable",
+          "zone": "安静卧室"
+        },
+        {
+          "id": "studyarmchair",
+          "quantity": 1,
+          "position": [
+            0.76,
+            -0.15,
+            1.67
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyside",
+          "quantity": 1,
+          "position": [
+            1.08,
+            -0.215,
+            1.7
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studystool",
+          "quantity": 1,
+          "position": [
+            0.76,
+            -0.2475,
+            1.97
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyteaset",
+          "quantity": 1,
+          "position": [
+            1.08,
+            -0.0725,
+            1.7
+          ],
+          "yaw": 0,
+          "support": "studyside",
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyfloorlamp",
+          "quantity": 1,
+          "position": [
+            0.48,
+            -0.065,
+            1.62
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "plant",
+          "quantity": 1,
+          "position": [
+            0.35,
+            -0.24,
+            -1.11
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "coatrack",
+          "quantity": 1,
+          "position": [
+            1.28,
+            -0.11,
+            1.05
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            0.328,
+            -0.338
+          ],
+          "description": "主题空间"
+        },
+        {
+          "name": "安静卧室",
+          "center": [
+            -0.875,
+            1.472
+          ],
+          "description": "安静卧室"
+        },
+        {
+          "name": "阅读休息",
+          "center": [
+            0.832,
+            1.732
+          ],
+          "description": "阅读休息"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_green_daybed",
+            "life_green_plantladder",
+            "life_green_greenhouse"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_green_olivetree",
+            "life_green_wateringcan",
+            "life_green_terrarium"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/green-panorama.png"
+    },
+    {
+      "id": "retro",
+      "title": "黑胶收藏客厅",
+      "style": "复古音乐",
+      "difficulty": "入门",
+      "mood": "夕照",
+      "dayHour": 17,
+      "brightness": 0.57,
+      "brief": "复古音乐的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_retro_chesterfield",
+          "quantity": 1,
+          "position": [
+            -0.62,
+            -0.16,
+            -0.94
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_retro_trunktable",
+          "quantity": 1,
+          "position": [
+            -0.62,
+            -0.22,
+            -0.35
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_retro_rotaryphone",
+          "quantity": 1,
+          "position": [
+            -0.62,
+            -0.055,
+            -0.36
+          ],
+          "yaw": 0,
+          "support": "life_retro_trunktable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_retro_recordconsole",
+          "quantity": 1,
+          "position": [
+            0.83,
+            -0.175,
+            -1.09
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_retro_gramophone",
+          "quantity": 1,
+          "position": [
+            0.68,
+            0.12,
+            -1.09
+          ],
+          "yaw": 0,
+          "support": "life_retro_recordconsole",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_retro_vinylrack",
+          "quantity": 1,
+          "position": [
+            0.98,
+            0.09,
+            -1.09
+          ],
+          "yaw": 0,
+          "support": "life_retro_recordconsole",
+          "zone": "主题空间"
+        },
+        {
+          "id": "studybookcase",
+          "quantity": 1,
+          "position": [
+            -1.34,
+            0.04,
+            -0.75
+          ],
+          "yaw": 90,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "dresser",
+          "quantity": 1,
+          "position": [
+            0.83,
+            -0.18,
+            -0.48
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "musicbox",
+          "quantity": 1,
+          "position": [
+            0.83,
+            0.0175,
+            -0.48
+          ],
+          "yaw": 0,
+          "support": "dresser",
+          "zone": "主题空间"
+        },
+        {
+          "id": "lamp",
+          "quantity": 1,
+          "position": [
+            -0.14,
+            -0.05,
+            -0.94
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyarmchair",
+          "quantity": 1,
+          "position": [
+            -0.84,
+            -0.15,
+            1.63
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyside",
+          "quantity": 1,
+          "position": [
+            -0.52,
+            -0.215,
+            1.66
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studystool",
+          "quantity": 1,
+          "position": [
+            -0.84,
+            -0.2475,
+            1.93
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyteaset",
+          "quantity": 1,
+          "position": [
+            -0.52,
+            -0.0725,
+            1.66
+          ],
+          "yaw": 0,
+          "support": "studyside",
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyfloorlamp",
+          "quantity": 1,
+          "position": [
+            -1.12,
+            -0.065,
+            1.58
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "bed",
+          "quantity": 1,
+          "position": [
+            0.66,
+            -0.18,
+            1.73
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "安静卧室"
+        },
+        {
+          "id": "wardrobe",
+          "quantity": 1,
+          "position": [
+            1.14,
+            -0.02,
+            1.54
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "安静卧室"
+        },
+        {
+          "id": "sidetable",
+          "quantity": 1,
+          "position": [
+            0.23,
+            -0.21,
+            1.57
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "安静卧室"
+        },
+        {
+          "id": "tablelamp",
+          "quantity": 1,
+          "position": [
+            0.23,
+            -0.01,
+            1.57
+          ],
+          "yaw": 0,
+          "support": "sidetable",
+          "zone": "安静卧室"
+        },
+        {
+          "id": "desk",
+          "quantity": 1,
+          "position": [
+            0.76,
+            -0.15,
+            0.35
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyglobe",
+          "quantity": 1,
+          "position": [
+            0.61,
+            0.095,
+            0.35
+          ],
+          "yaw": 0,
+          "support": "desk",
+          "zone": "主题空间"
+        },
+        {
+          "id": "books",
+          "quantity": 1,
+          "position": [
+            0.83,
+            0.055,
+            0.35
+          ],
+          "yaw": 0,
+          "support": "desk",
+          "zone": "主题空间"
+        },
+        {
+          "id": "chair",
+          "quantity": 1,
+          "position": [
+            0.76,
+            -0.175,
+            0.69
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            0.269,
+            -0.416
+          ],
+          "description": "主题空间"
+        },
+        {
+          "name": "阅读休息",
+          "center": [
+            -0.768,
+            1.692
+          ],
+          "description": "阅读休息"
+        },
+        {
+          "name": "安静卧室",
+          "center": [
+            0.565,
+            1.603
+          ],
+          "description": "安静卧室"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_retro_chesterfield",
+            "life_retro_recordconsole",
+            "life_retro_gramophone"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_retro_vinylrack",
+            "life_retro_rotaryphone",
+            "life_retro_trunktable"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/retro-panorama.png"
+    },
+    {
+      "id": "workshop",
+      "title": "陶艺创作工坊",
+      "style": "陶艺手作",
+      "difficulty": "入门",
+      "mood": "晨光",
+      "dayHour": 10,
+      "brightness": 0.68,
+      "brief": "陶艺手作的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_workshop_potterybench",
+          "quantity": 1,
+          "position": [
+            -0.55,
+            -0.15,
+            -0.78
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_workshop_vesselset",
+          "quantity": 1,
+          "position": [
+            -0.66,
+            0.105,
+            -0.78
+          ],
+          "yaw": 0,
+          "support": "life_workshop_potterybench",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_workshop_saddlestool",
+          "quantity": 1,
+          "position": [
+            -0.55,
+            -0.195,
+            -0.29
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_workshop_potterywheel",
+          "quantity": 1,
+          "position": [
+            0.17,
+            -0.18,
+            -0.64
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_workshop_kiln",
+          "quantity": 1,
+          "position": [
+            0.93,
+            -0.12,
+            -0.94
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_workshop_clayrack",
+          "quantity": 1,
+          "position": [
+            -1.27,
+            -0.055,
+            -0.98
+          ],
+          "yaw": 90,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "bookcase",
+          "quantity": 1,
+          "position": [
+            1.38,
+            -0.06,
+            -0.62
+          ],
+          "yaw": -90,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "dresser",
+          "quantity": 1,
+          "position": [
+            0.9,
+            -0.18,
+            0.15
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "vase",
+          "quantity": 1,
+          "position": [
+            0.81,
+            0.04,
+            0.15
+          ],
+          "yaw": 0,
+          "support": "dresser",
+          "zone": "主题空间"
+        },
+        {
+          "id": "teapot",
+          "quantity": 1,
+          "position": [
+            0.985,
+            0.005,
+            0.15
+          ],
+          "yaw": 0,
+          "support": "dresser",
+          "zone": "主题空间"
+        },
+        {
+          "id": "studydesk",
+          "quantity": 1,
+          "position": [
+            -0.82,
+            -0.145,
+            1.29
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "写作角"
+        },
+        {
+          "id": "studychair",
+          "quantity": 1,
+          "position": [
+            -0.82,
+            -0.1525,
+            1.63
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "写作角"
+        },
+        {
+          "id": "studybook",
+          "quantity": 1,
+          "position": [
+            -0.81,
+            0.039,
+            1.32
+          ],
+          "yaw": 0,
+          "support": "studydesk",
+          "zone": "写作角"
+        },
+        {
+          "id": "studybanker",
+          "quantity": 1,
+          "position": [
+            -1.02,
+            0.12,
+            1.23
+          ],
+          "yaw": 0,
+          "support": "studydesk",
+          "zone": "写作角"
+        },
+        {
+          "id": "gardenbench",
+          "quantity": 1,
+          "position": [
+            0.78,
+            -0.2025,
+            2.1
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "tallplant",
+          "quantity": 1,
+          "position": [
+            1.23,
+            -0.13,
+            2.02
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "shoecabinet",
+          "quantity": 1,
+          "position": [
+            1.25,
+            -0.2,
+            1.15
+          ],
+          "yaw": -90,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "abacus",
+          "quantity": 1,
+          "position": [
+            -0.37,
+            0.075,
+            -0.78
+          ],
+          "yaw": 0,
+          "support": "life_workshop_potterybench",
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyfern",
+          "quantity": 1,
+          "position": [
+            -0.3,
+            -0.185,
+            2.04
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            0.316,
+            0.13
+          ],
+          "description": "主题空间"
+        },
+        {
+          "name": "写作角",
+          "center": [
+            -0.868,
+            1.368
+          ],
+          "description": "写作角"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_workshop_potterybench",
+            "life_workshop_potterywheel",
+            "life_workshop_kiln"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_workshop_clayrack",
+            "life_workshop_saddlestool",
+            "life_workshop_vesselset"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/workshop-panorama.png"
+    },
+    {
+      "id": "minimal",
+      "title": "奶油留白居所",
+      "style": "柔和极简",
+      "difficulty": "入门",
+      "mood": "晨光",
+      "dayHour": 10,
+      "brightness": 0.68,
+      "brief": "柔和极简的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_minimal_curvesofa",
+          "quantity": 1,
+          "position": [
+            0.61,
+            -0.175,
+            -0.91
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_minimal_stonetable",
+          "quantity": 1,
+          "position": [
+            0.61,
+            -0.225,
+            -0.35
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_minimal_arclamp",
+          "quantity": 1,
+          "position": [
+            1.22,
+            -0.015,
+            -0.84
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_minimal_flutedsideboard",
+          "quantity": 1,
+          "position": [
+            -0.83,
+            -0.165,
+            -1.1
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_minimal_ringsculpture",
+          "quantity": 1,
+          "position": [
+            -0.75,
+            0.105,
+            -1.1
+          ],
+          "yaw": 0,
+          "support": "life_minimal_flutedsideboard",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_minimal_platformbed",
+          "quantity": 1,
+          "position": [
+            -0.78,
+            -0.21,
+            1.52
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "ottoman",
+          "quantity": 1,
+          "position": [
+            -0.8,
+            -0.2525,
+            0.29
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyfloorlamp",
+          "quantity": 1,
+          "position": [
+            -0.23,
+            -0.065,
+            1.65
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "vase",
+          "quantity": 1,
+          "position": [
+            1.89,
+            -0.24,
+            -0.4
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "diningtable",
+          "quantity": 1,
+          "position": [
+            0.7,
+            -0.17,
+            1.5
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "diningchair",
+          "quantity": 1,
+          "position": [
+            0.7,
+            -0.18,
+            1.83
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "mug",
+          "quantity": 1,
+          "position": [
+            0.7,
+            0.015,
+            1.5
+          ],
+          "yaw": 0,
+          "support": "diningtable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyfern",
+          "quantity": 1,
+          "position": [
+            1.28,
+            -0.185,
+            2.12
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "wallclock",
+          "quantity": 1,
+          "position": [
+            1.14,
+            0.37,
+            -1.366
+          ],
+          "yaw": 0,
+          "support": "@back",
+          "zone": "墙面"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            0.332,
+            0.439
+          ],
+          "description": "主题空间"
+        },
+        {
+          "name": "墙面",
+          "center": [
+            1.14,
+            -1.366
+          ],
+          "description": "墙面"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_minimal_curvesofa",
+            "life_minimal_stonetable",
+            "life_minimal_platformbed"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_minimal_arclamp",
+            "life_minimal_flutedsideboard",
+            "life_minimal_ringsculpture"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/minimal-panorama.png"
+    },
+    {
+      "id": "play",
+      "title": "童话玩具之家",
+      "style": "童趣家庭",
+      "difficulty": "入门",
+      "mood": "晨光",
+      "dayHour": 10,
+      "brightness": 0.68,
+      "brief": "童趣家庭的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_play_housebed",
+          "quantity": 1,
+          "position": [
+            -0.85,
+            -0.02,
+            -0.85
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_play_cloudshelf",
+          "quantity": 1,
+          "position": [
+            0.51,
+            -0.1,
+            -1.07
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_play_beanbag",
+          "quantity": 1,
+          "position": [
+            -0.5,
+            -0.17,
+            0.26
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_play_traintable",
+          "quantity": 1,
+          "position": [
+            0.5,
+            -0.205,
+            -0.31
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "dresser",
+          "quantity": 1,
+          "position": [
+            1.22,
+            -0.18,
+            -0.89
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_play_dollhouse",
+          "quantity": 1,
+          "position": [
+            1.22,
+            0.135,
+            -0.89
+          ],
+          "yaw": 0,
+          "support": "dresser",
+          "zone": "主题空间"
+        },
+        {
+          "id": "diningtable",
+          "quantity": 1,
+          "position": [
+            0.86,
+            -0.17,
+            0.39
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_play_rainbowstack",
+          "quantity": 1,
+          "position": [
+            0.86,
+            0.06,
+            0.39
+          ],
+          "yaw": 0,
+          "support": "diningtable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "mochi",
+          "quantity": 1,
+          "position": [
+            -0.87,
+            -0.27,
+            0.32
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "jelly",
+          "quantity": 1,
+          "position": [
+            -0.95,
+            -0.2675,
+            -0.2
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "rattle",
+          "quantity": 1,
+          "position": [
+            -0.45,
+            -0.21,
+            -0.22
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "tumbler",
+          "quantity": 1,
+          "position": [
+            -0.06,
+            -0.24,
+            0.35
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studydesk",
+          "quantity": 1,
+          "position": [
+            -0.8,
+            -0.145,
+            1.32
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "写作角"
+        },
+        {
+          "id": "studychair",
+          "quantity": 1,
+          "position": [
+            -0.8,
+            -0.1525,
+            1.66
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "写作角"
+        },
+        {
+          "id": "studybook",
+          "quantity": 1,
+          "position": [
+            -0.79,
+            0.039,
+            1.35
+          ],
+          "yaw": 0,
+          "support": "studydesk",
+          "zone": "写作角"
+        },
+        {
+          "id": "studybanker",
+          "quantity": 1,
+          "position": [
+            -1.0,
+            0.12,
+            1.26
+          ],
+          "yaw": 0,
+          "support": "studydesk",
+          "zone": "写作角"
+        },
+        {
+          "id": "sofa",
+          "quantity": 1,
+          "position": [
+            0.75,
+            -0.185,
+            1.78
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "coffee",
+          "quantity": 1,
+          "position": [
+            0.75,
+            -0.245,
+            1.28
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "pokeball",
+          "quantity": 1,
+          "position": [
+            0.75,
+            -0.1,
+            1.28
+          ],
+          "yaw": 0,
+          "support": "coffee",
+          "zone": "主题空间"
+        },
+        {
+          "id": "windmill",
+          "quantity": 1,
+          "position": [
+            1.19,
+            -0.225,
+            2.02
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "blanket",
+          "quantity": 1,
+          "position": [
+            -0.79,
+            -0.2925,
+            2.05
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            0.244,
+            0.335
+          ],
+          "description": "主题空间"
+        },
+        {
+          "name": "写作角",
+          "center": [
+            -0.848,
+            1.397
+          ],
+          "description": "写作角"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_play_housebed",
+            "life_play_cloudshelf",
+            "life_play_rainbowstack"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_play_beanbag",
+            "life_play_dollhouse",
+            "life_play_traintable"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/play-panorama.png"
+    },
+    {
+      "id": "cinema",
+      "title": "私享电影之夜",
+      "style": "家庭影院",
+      "difficulty": "入门",
+      "mood": "夜读",
+      "dayHour": 21,
+      "brightness": 0.57,
+      "brief": "家庭影院的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_cinema_screen",
+          "quantity": 1,
+          "position": [
+            -0.05,
+            -0.035,
+            -1.19
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_cinema_recliner",
+          "quantity": 1,
+          "position": [
+            -0.05,
+            -0.155,
+            -0.28
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_cinema_mediaconsole",
+          "quantity": 1,
+          "position": [
+            0.86,
+            -0.2,
+            -0.84
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_cinema_projector",
+          "quantity": 1,
+          "position": [
+            0.7,
+            -0.015,
+            -0.84
+          ],
+          "yaw": 0,
+          "support": "life_cinema_mediaconsole",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_cinema_filmreels",
+          "quantity": 1,
+          "position": [
+            1.02,
+            0.02,
+            -0.84
+          ],
+          "yaw": 0,
+          "support": "life_cinema_mediaconsole",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_cinema_popcorntrolley",
+          "quantity": 1,
+          "position": [
+            -0.96,
+            -0.085,
+            -0.77
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "sofa",
+          "quantity": 1,
+          "position": [
+            -0.87,
+            -0.185,
+            0.18
+          ],
+          "yaw": 150,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "ottoman",
+          "quantity": 1,
+          "position": [
+            0.74,
+            -0.2525,
+            0.16
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "lamp",
+          "quantity": 1,
+          "position": [
+            1.28,
+            -0.05,
+            -0.65
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "tvconsole",
+          "quantity": 1,
+          "position": [
+            0.88,
+            -0.22,
+            2.09
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "television",
+          "quantity": 1,
+          "position": [
+            0.88,
+            -0.005,
+            2.09
+          ],
+          "yaw": 180,
+          "support": "tvconsole",
+          "zone": "主题空间"
+        },
+        {
+          "id": "gamingchair",
+          "quantity": 1,
+          "position": [
+            0.89,
+            -0.105,
+            1.42
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "gamingstorage",
+          "quantity": 1,
+          "position": [
+            1.32,
+            -0.2,
+            1.88
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "gaminggamepad",
+          "quantity": 1,
+          "position": [
+            1.32,
+            -0.044,
+            1.88
+          ],
+          "yaw": 0,
+          "support": "gamingstorage",
+          "zone": "主题空间"
+        },
+        {
+          "id": "dresser",
+          "quantity": 1,
+          "position": [
+            -0.87,
+            -0.18,
+            1.4
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "musicbox",
+          "quantity": 1,
+          "position": [
+            -0.945,
+            0.0175,
+            1.4
+          ],
+          "yaw": 0,
+          "support": "dresser",
+          "zone": "主题空间"
+        },
+        {
+          "id": "alarmclock",
+          "quantity": 1,
+          "position": [
+            -0.795,
+            0.0075,
+            1.4
+          ],
+          "yaw": 0,
+          "support": "dresser",
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyarmchair",
+          "quantity": 1,
+          "position": [
+            -0.84,
+            -0.15,
+            1.91
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "gaminglight",
+          "quantity": 1,
+          "position": [
+            0.3,
+            -0.1,
+            2.16
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            0.253,
+            0.661
+          ],
+          "description": "主题空间"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_cinema_recliner",
+            "life_cinema_projector",
+            "life_cinema_screen"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_cinema_popcorntrolley",
+            "life_cinema_filmreels",
+            "life_cinema_mediaconsole"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/cinema-panorama.png"
+    },
+    {
+      "id": "tea",
+      "title": "竹影静心茶室",
+      "style": "东方茶居",
+      "difficulty": "入门",
+      "mood": "夕照",
+      "dayHour": 17,
+      "brightness": 0.57,
+      "brief": "东方茶居的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_tea_shoji",
+          "quantity": 1,
+          "position": [
+            -0.6,
+            -0.025,
+            -1.13
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_tea_teatable",
+          "quantity": 1,
+          "position": [
+            -0.61,
+            -0.215,
+            -0.49
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_tea_gongfutray",
+          "quantity": 1,
+          "position": [
+            -0.705,
+            -0.047364,
+            -0.49
+          ],
+          "yaw": 0,
+          "support": "life_tea_teatable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_tea_incense",
+          "quantity": 1,
+          "position": [
+            -0.465,
+            -0.084864,
+            -0.465
+          ],
+          "yaw": 0,
+          "support": "life_tea_teatable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_tea_zabuton",
+          "quantity": 1,
+          "position": [
+            -0.61,
+            -0.2725,
+            0.01
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_tea_bamboofountain",
+          "quantity": 1,
+          "position": [
+            0.14,
+            -0.185,
+            -0.91
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "tallplant",
+          "quantity": 1,
+          "position": [
+            1.03,
+            -0.13,
+            -1.03
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "gardenbench",
+          "quantity": 1,
+          "position": [
+            0.9,
+            -0.2025,
+            -0.39
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "plant",
+          "quantity": 1,
+          "position": [
+            1.87,
+            -0.24,
+            -0.49
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "bookcase",
+          "quantity": 1,
+          "position": [
+            0.93,
+            -0.06,
+            0.33
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "bowl",
+          "quantity": 1,
+          "position": [
+            0.21,
+            -0.285,
+            0.32
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "woodfish",
+          "quantity": 1,
+          "position": [
+            -0.85,
+            -0.27,
+            0.44
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyarmchair",
+          "quantity": 1,
+          "position": [
+            -0.85,
+            -0.15,
+            1.63
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyside",
+          "quantity": 1,
+          "position": [
+            -0.53,
+            -0.215,
+            1.66
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studystool",
+          "quantity": 1,
+          "position": [
+            -0.85,
+            -0.2475,
+            1.93
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyteaset",
+          "quantity": 1,
+          "position": [
+            -0.53,
+            -0.0725,
+            1.66
+          ],
+          "yaw": 0,
+          "support": "studyside",
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyfloorlamp",
+          "quantity": 1,
+          "position": [
+            -1.13,
+            -0.065,
+            1.58
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "diningtable",
+          "quantity": 1,
+          "position": [
+            0.77,
+            -0.17,
+            1.69
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "teapot",
+          "quantity": 1,
+          "position": [
+            0.71,
+            0.025,
+            1.69
+          ],
+          "yaw": 0,
+          "support": "diningtable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "diningchair",
+          "quantity": 1,
+          "position": [
+            0.76,
+            -0.18,
+            2.02
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "vase",
+          "quantity": 1,
+          "position": [
+            1.28,
+            -0.24,
+            2.1
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            0.298,
+            0.2
+          ],
+          "description": "主题空间"
+        },
+        {
+          "name": "阅读休息",
+          "center": [
+            -0.778,
+            1.692
+          ],
+          "description": "阅读休息"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_tea_teatable",
+            "life_tea_zabuton",
+            "life_tea_shoji"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_tea_bamboofountain",
+            "life_tea_incense",
+            "life_tea_gongfutray"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/tea-panorama.png"
+    },
+    {
+      "id": "player",
+      "title": "未来玩家基地",
+      "style": "科技电竞",
+      "difficulty": "入门",
+      "mood": "夜读",
+      "dayHour": 21,
+      "brightness": 0.57,
+      "brief": "科技电竞的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_player_cockpitdesk",
+          "quantity": 1,
+          "position": [
+            -0.56,
+            -0.14,
+            -0.94
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_player_widepanel",
+          "quantity": 1,
+          "position": [
+            -0.56,
+            0.165,
+            -1.01
+          ],
+          "yaw": 0,
+          "support": "life_player_cockpitdesk",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_player_racingseat",
+          "quantity": 1,
+          "position": [
+            -0.56,
+            -0.095,
+            -0.39
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_player_pcpod",
+          "quantity": 1,
+          "position": [
+            0.0,
+            -0.14,
+            -0.94
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_player_hexlight",
+          "quantity": 1,
+          "position": [
+            -1.2,
+            -0.1,
+            -0.95
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_player_arcade",
+          "quantity": 1,
+          "position": [
+            1.08,
+            -0.035,
+            -1.01
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "gamingmat",
+          "quantity": 1,
+          "position": [
+            -0.56,
+            0.042,
+            -0.835
+          ],
+          "yaw": 0,
+          "support": "life_player_cockpitdesk",
+          "zone": "主题空间"
+        },
+        {
+          "id": "gamingstorage",
+          "quantity": 1,
+          "position": [
+            1.09,
+            -0.2,
+            -0.29
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "gamingheadset",
+          "quantity": 1,
+          "position": [
+            1.09,
+            -0.0,
+            -0.29
+          ],
+          "yaw": 0,
+          "support": "gamingstorage",
+          "zone": "主题空间"
+        },
+        {
+          "id": "gaminglight",
+          "quantity": 1,
+          "position": [
+            1.34,
+            -0.1,
+            -0.88
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "tvconsole",
+          "quantity": 1,
+          "position": [
+            0.8,
+            -0.22,
+            0.44
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "television",
+          "quantity": 1,
+          "position": [
+            0.8,
+            -0.005,
+            0.44
+          ],
+          "yaw": 0,
+          "support": "tvconsole",
+          "zone": "主题空间"
+        },
+        {
+          "id": "bed",
+          "quantity": 1,
+          "position": [
+            -0.81,
+            -0.18,
+            1.55
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "安静卧室"
+        },
+        {
+          "id": "wardrobe",
+          "quantity": 1,
+          "position": [
+            -0.33,
+            -0.02,
+            1.36
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "安静卧室"
+        },
+        {
+          "id": "sidetable",
+          "quantity": 1,
+          "position": [
+            -1.24,
+            -0.21,
+            1.39
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "安静卧室"
+        },
+        {
+          "id": "tablelamp",
+          "quantity": 1,
+          "position": [
+            -1.24,
+            -0.01,
+            1.39
+          ],
+          "yaw": 0,
+          "support": "sidetable",
+          "zone": "安静卧室"
+        },
+        {
+          "id": "sofa",
+          "quantity": 1,
+          "position": [
+            0.77,
+            -0.185,
+            2.08
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "coffee",
+          "quantity": 1,
+          "position": [
+            0.77,
+            -0.245,
+            1.5
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "gaminggamepad",
+          "quantity": 1,
+          "position": [
+            0.77,
+            -0.134,
+            1.5
+          ],
+          "yaw": 0,
+          "support": "coffee",
+          "zone": "主题空间"
+        },
+        {
+          "id": "gamingkeyboard",
+          "quantity": 1,
+          "position": [
+            -0.62,
+            0.056,
+            -0.835
+          ],
+          "yaw": 0,
+          "support": "gamingmat",
+          "zone": "主题空间"
+        },
+        {
+          "id": "spinner",
+          "quantity": 1,
+          "position": [
+            1.87,
+            -0.3025,
+            -0.54
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            0.372,
+            -0.174
+          ],
+          "description": "主题空间"
+        },
+        {
+          "name": "安静卧室",
+          "center": [
+            -0.905,
+            1.422
+          ],
+          "description": "安静卧室"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_player_cockpitdesk",
+            "life_player_racingseat",
+            "life_player_widepanel"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_player_pcpod",
+            "life_player_hexlight",
+            "life_player_arcade"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/player-panorama.png"
+    },
+    {
+      "id": "bakery",
+      "title": "街角烘焙咖啡屋",
+      "style": "烘焙咖啡",
+      "difficulty": "入门",
+      "mood": "晨光",
+      "dayHour": 10,
+      "brightness": 0.68,
+      "brief": "烘焙咖啡的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_bakery_cafecounter",
+          "quantity": 1,
+          "position": [
+            -0.63,
+            -0.135,
+            -0.95
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_bakery_espresso",
+          "quantity": 1,
+          "position": [
+            -0.802,
+            0.17,
+            -0.965
+          ],
+          "yaw": 0,
+          "support": "life_bakery_cafecounter",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_bakery_pastrycase",
+          "quantity": 1,
+          "position": [
+            -0.484,
+            0.19,
+            -0.965
+          ],
+          "yaw": 0,
+          "support": "life_bakery_cafecounter",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_bakery_booth",
+          "quantity": 1,
+          "position": [
+            0.74,
+            -0.15,
+            -0.98
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "diningtable",
+          "quantity": 1,
+          "position": [
+            0.74,
+            -0.17,
+            -0.39
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_bakery_cakestand",
+          "quantity": 1,
+          "position": [
+            0.74,
+            0.095,
+            -0.39
+          ],
+          "yaw": 0,
+          "support": "diningtable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_bakery_menueasel",
+          "quantity": 1,
+          "position": [
+            1.17,
+            -0.11,
+            0.35
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "diningchair",
+          "quantity": 1,
+          "position": [
+            0.73,
+            -0.18,
+            0.0
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "fridge",
+          "quantity": 1,
+          "position": [
+            -1.22,
+            -0.09,
+            -1.03
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "stove",
+          "quantity": 1,
+          "position": [
+            -1.14,
+            -0.165,
+            -0.37
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "sink",
+          "quantity": 1,
+          "position": [
+            -0.68,
+            -0.165,
+            -0.26
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "dresser",
+          "quantity": 1,
+          "position": [
+            -0.84,
+            -0.18,
+            1.34
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "crockery",
+          "quantity": 1,
+          "position": [
+            -0.925,
+            -0.0075,
+            1.34
+          ],
+          "yaw": 0,
+          "support": "dresser",
+          "zone": "主题空间"
+        },
+        {
+          "id": "fruitbowl",
+          "quantity": 1,
+          "position": [
+            -0.765,
+            -0.005,
+            1.34
+          ],
+          "yaw": 0,
+          "support": "dresser",
+          "zone": "主题空间"
+        },
+        {
+          "id": "gardenbench",
+          "quantity": 1,
+          "position": [
+            0.65,
+            -0.2025,
+            1.54
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "sidetable",
+          "quantity": 1,
+          "position": [
+            1.0,
+            -0.21,
+            1.57
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "mug",
+          "quantity": 1,
+          "position": [
+            1.0,
+            -0.065,
+            1.57
+          ],
+          "yaw": 0,
+          "support": "sidetable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "coatrack",
+          "quantity": 1,
+          "position": [
+            1.34,
+            -0.11,
+            2.12
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyfern",
+          "quantity": 1,
+          "position": [
+            -0.96,
+            -0.185,
+            2.01
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "wallclock",
+          "quantity": 1,
+          "position": [
+            0.35,
+            0.38,
+            -1.366
+          ],
+          "yaw": 0,
+          "support": "@back",
+          "zone": "墙面"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            -0.018,
+            0.362
+          ],
+          "description": "主题空间"
+        },
+        {
+          "name": "墙面",
+          "center": [
+            0.35,
+            -1.366
+          ],
+          "description": "墙面"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_bakery_cafecounter",
+            "life_bakery_booth",
+            "life_bakery_espresso"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_bakery_pastrycase",
+            "life_bakery_cakestand",
+            "life_bakery_menueasel"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/bakery-panorama.png"
+    },
+    {
+      "id": "fashion",
+      "title": "独立裁缝工作室",
+      "style": "服装设计",
+      "difficulty": "入门",
+      "mood": "晨光",
+      "dayHour": 10,
+      "brightness": 0.68,
+      "brief": "服装设计的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_fashion_sewingdesk",
+          "quantity": 1,
+          "position": [
+            -0.52,
+            -0.15,
+            -0.88
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_fashion_sewingmachine",
+          "quantity": 1,
+          "position": [
+            -0.63,
+            0.128509,
+            -0.92
+          ],
+          "yaw": 0,
+          "support": "life_fashion_sewingdesk",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_fashion_dressform",
+          "quantity": 1,
+          "position": [
+            0.19,
+            -0.035,
+            -0.86
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_fashion_garmentrack",
+          "quantity": 1,
+          "position": [
+            0.87,
+            -0.045,
+            -1.08
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_fashion_fabricbasket",
+          "quantity": 1,
+          "position": [
+            -1.08,
+            -0.17,
+            -0.85
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_fashion_ovalmirror",
+          "quantity": 1,
+          "position": [
+            1.23,
+            -0.015,
+            -0.4
+          ],
+          "yaw": -25,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studychair",
+          "quantity": 1,
+          "position": [
+            -0.52,
+            -0.1525,
+            -0.43
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "wardrobe",
+          "quantity": 1,
+          "position": [
+            -0.85,
+            -0.02,
+            1.95
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "dresser",
+          "quantity": 1,
+          "position": [
+            -0.81,
+            -0.18,
+            1.2
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "books",
+          "quantity": 1,
+          "position": [
+            -0.89,
+            -0.005,
+            1.2
+          ],
+          "yaw": 0,
+          "support": "dresser",
+          "zone": "主题空间"
+        },
+        {
+          "id": "vase",
+          "quantity": 1,
+          "position": [
+            -0.73,
+            0.04,
+            1.2
+          ],
+          "yaw": 0,
+          "support": "dresser",
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyarmchair",
+          "quantity": 1,
+          "position": [
+            0.66,
+            -0.15,
+            1.68
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyside",
+          "quantity": 1,
+          "position": [
+            0.98,
+            -0.215,
+            1.71
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studystool",
+          "quantity": 1,
+          "position": [
+            0.66,
+            -0.2475,
+            1.98
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyteaset",
+          "quantity": 1,
+          "position": [
+            0.98,
+            -0.0725,
+            1.71
+          ],
+          "yaw": 0,
+          "support": "studyside",
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studyfloorlamp",
+          "quantity": 1,
+          "position": [
+            0.38,
+            -0.065,
+            1.63
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "阅读休息"
+        },
+        {
+          "id": "studybookcase",
+          "quantity": 1,
+          "position": [
+            -1.35,
+            0.04,
+            -0.17
+          ],
+          "yaw": 90,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "tablelamp",
+          "quantity": 1,
+          "position": [
+            -0.93,
+            -0.23,
+            0.36
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "shoecabinet",
+          "quantity": 1,
+          "position": [
+            1.31,
+            -0.2,
+            0.84
+          ],
+          "yaw": -90,
+          "support": null,
+          "zone": "主题空间"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            -0.336,
+            0.083
+          ],
+          "description": "主题空间"
+        },
+        {
+          "name": "阅读休息",
+          "center": [
+            0.732,
+            1.742
+          ],
+          "description": "阅读休息"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_fashion_sewingdesk",
+            "life_fashion_sewingmachine",
+            "life_fashion_dressform"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_fashion_garmentrack",
+            "life_fashion_fabricbasket",
+            "life_fashion_ovalmirror"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/fashion-panorama.png"
+    },
+    {
+      "id": "camp",
+      "title": "山野露营小屋",
+      "style": "户外旅居",
+      "difficulty": "入门",
+      "mood": "夕照",
+      "dayHour": 17,
+      "brightness": 0.57,
+      "brief": "户外旅居的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_camp_tent",
+          "quantity": 1,
+          "position": [
+            -0.66,
+            -0.07,
+            -0.84
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_camp_campchair",
+          "quantity": 1,
+          "position": [
+            0.38,
+            -0.15,
+            -0.74
+          ],
+          "yaw": 160,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_camp_camptable",
+          "quantity": 1,
+          "position": [
+            0.37,
+            -0.19,
+            -0.12
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_camp_campkettle",
+          "quantity": 1,
+          "position": [
+            0.29,
+            0.04,
+            -0.12
+          ],
+          "yaw": 0,
+          "support": "life_camp_camptable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_camp_lantern",
+          "quantity": 1,
+          "position": [
+            0.46,
+            0.065,
+            -0.12
+          ],
+          "yaw": 0,
+          "support": "life_camp_camptable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_camp_firepit",
+          "quantity": 1,
+          "position": [
+            1.1,
+            -0.22,
+            -0.63
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "gardenbench",
+          "quantity": 1,
+          "position": [
+            1.86,
+            -0.2025,
+            -0.54
+          ],
+          "yaw": -90,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "tallplant",
+          "quantity": 1,
+          "position": [
+            -1.2,
+            -0.13,
+            -1.04
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyfern",
+          "quantity": 1,
+          "position": [
+            1.36,
+            -0.185,
+            0.27
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "ottoman",
+          "quantity": 1,
+          "position": [
+            -0.61,
+            -0.2525,
+            0.15
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "blanket",
+          "quantity": 1,
+          "position": [
+            -0.17,
+            -0.2925,
+            0.43
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "shoecabinet",
+          "quantity": 1,
+          "position": [
+            1.19,
+            -0.2,
+            1.09
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "coatrack",
+          "quantity": 1,
+          "position": [
+            1.3,
+            -0.11,
+            1.81
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "desk",
+          "quantity": 1,
+          "position": [
+            -0.79,
+            -0.15,
+            1.37
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "mug",
+          "quantity": 1,
+          "position": [
+            -0.92,
+            0.055,
+            1.37
+          ],
+          "yaw": 0,
+          "support": "desk",
+          "zone": "主题空间"
+        },
+        {
+          "id": "book",
+          "quantity": 1,
+          "position": [
+            -0.72,
+            0.029,
+            1.37
+          ],
+          "yaw": 0,
+          "support": "desk",
+          "zone": "主题空间"
+        },
+        {
+          "id": "chair",
+          "quantity": 1,
+          "position": [
+            -0.79,
+            -0.175,
+            1.73
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "hourglass",
+          "quantity": 1,
+          "position": [
+            0.55,
+            -0.24,
+            2.05
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            0.167,
+            0.416
+          ],
+          "description": "主题空间"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_camp_tent",
+            "life_camp_campchair",
+            "life_camp_camptable"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_camp_lantern",
+            "life_camp_firepit",
+            "life_camp_campkettle"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/camp-panorama.png"
+    },
+    {
+      "id": "artist",
+      "title": "光线画室",
+      "style": "绘画创作",
+      "difficulty": "入门",
+      "mood": "晨光",
+      "dayHour": 10,
+      "brightness": 0.68,
+      "brief": "绘画创作的专属家具与器物。",
+      "feature": "六款专属模型与独立生活布局。",
+      "challenge": "把喜欢的物品重新摆放，做成自己的家。",
+      "items": [
+        {
+          "id": "life_artist_easel",
+          "quantity": 1,
+          "position": [
+            -0.54,
+            0.005,
+            -0.76
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_artist_artcart",
+          "quantity": 1,
+          "position": [
+            0.05,
+            -0.155,
+            -0.61
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_artist_brushjars",
+          "quantity": 1,
+          "position": [
+            0.05,
+            0.088276,
+            -0.61
+          ],
+          "yaw": 0,
+          "support": "life_artist_artcart",
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_artist_flatfile",
+          "quantity": 1,
+          "position": [
+            0.88,
+            -0.15,
+            -1.03
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_artist_bust",
+          "quantity": 1,
+          "position": [
+            1.2,
+            -0.095,
+            -0.4
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "life_artist_colorpartition",
+          "quantity": 1,
+          "position": [
+            -1.2,
+            -0.04,
+            -0.89
+          ],
+          "yaw": 35,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studystool",
+          "quantity": 1,
+          "position": [
+            -0.54,
+            -0.2475,
+            -0.24
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studydesk",
+          "quantity": 1,
+          "position": [
+            -0.75,
+            -0.145,
+            1.31
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studybook",
+          "quantity": 1,
+          "position": [
+            -0.75,
+            0.039,
+            1.31
+          ],
+          "yaw": 0,
+          "support": "studydesk",
+          "zone": "主题空间"
+        },
+        {
+          "id": "studychair",
+          "quantity": 1,
+          "position": [
+            -0.75,
+            -0.1525,
+            1.66
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studybanker",
+          "quantity": 1,
+          "position": [
+            -0.96,
+            0.12,
+            1.25
+          ],
+          "yaw": 0,
+          "support": "studydesk",
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyarmchair",
+          "quantity": 1,
+          "position": [
+            0.66,
+            -0.15,
+            1.74
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "sidetable",
+          "quantity": 1,
+          "position": [
+            1.03,
+            -0.21,
+            1.75
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyteaset",
+          "quantity": 1,
+          "position": [
+            1.03,
+            -0.0625,
+            1.75
+          ],
+          "yaw": 0,
+          "support": "sidetable",
+          "zone": "主题空间"
+        },
+        {
+          "id": "bookcase",
+          "quantity": 1,
+          "position": [
+            1.35,
+            -0.06,
+            2.19
+          ],
+          "yaw": 180,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "vase",
+          "quantity": 1,
+          "position": [
+            1.86,
+            -0.24,
+            -0.61
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "plant",
+          "quantity": 1,
+          "position": [
+            1.87,
+            -0.24,
+            0.12
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        },
+        {
+          "id": "studyfloorlamp",
+          "quantity": 1,
+          "position": [
+            0.23,
+            -0.065,
+            1.93
+          ],
+          "yaw": 0,
+          "support": null,
+          "zone": "主题空间"
+        }
+      ],
+      "zones": [
+        {
+          "name": "主题空间",
+          "center": [
+            0.262,
+            0.548
+          ],
+          "description": "主题空间"
+        }
+      ],
+      "steps": [
+        {
+          "title": "选择主角家具",
+          "hint": "先安排主要家具，再摆放器物。",
+          "itemIds": [
+            "life_artist_easel",
+            "life_artist_artcart",
+            "life_artist_flatfile"
+          ]
+        },
+        {
+          "title": "添加生活细节",
+          "hint": "专属器物和常用物件一起布置。",
+          "itemIds": [
+            "life_artist_bust",
+            "life_artist_brushjars",
+            "life_artist_colorpartition"
+          ]
+        }
+      ],
+      "details": [],
+      "variants": [],
+      "panorama": "previews/artist-panorama.png"
+    }
+  ]
+}
