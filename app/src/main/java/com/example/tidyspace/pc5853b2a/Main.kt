@@ -7,7 +7,6 @@ import com.pico.spatial.ui.foundation.dsl.SpatialAppScope
 import com.pico.spatial.ui.foundation.dsl.Stage
 import com.example.tidyspace.pc5853b2a.platform.FullSpaceActivity
 import com.example.tidyspace.pc5853b2a.ui.navigation.FULL_SPACE_STAGE
-import com.example.tidyspace.pc5853b2a.ui.navigation.SpaceModeControl
 import com.example.tidyspace.pc5853b2a.ui.navigation.SpaceSessionUi
 import com.example.tidyspace.pc5853b2a.ui.navigation.BindSpaceWindow
 import androidx.compose.foundation.layout.Box
@@ -28,7 +27,6 @@ fun mainApp(scope: SpatialAppScope) =
                 SpaceSessionUi("main-window") {
                     BindSpaceWindow()
                     TidyHome()
-                    SpaceModeControl()
                 }
             }
             }

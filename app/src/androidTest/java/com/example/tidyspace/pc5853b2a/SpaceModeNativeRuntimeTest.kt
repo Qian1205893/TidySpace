@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Process
 import android.os.SystemClock
 import android.util.Log
+import android.view.Choreographer
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.lifecycle.ViewModelProvider
@@ -18,9 +19,12 @@ import com.example.tidyspace.pc5853b2a.ui.sorting.*
 import com.example.tidyspace.pc5853b2a.ui.sorting.components.CatalogueCategory
 import com.example.tidyspace.pc5853b2a.ui.sorting.scene.RoomScene
 import com.example.tidyspace.pc5853b2a.ui.sorting.scene.SortingScene
+import com.example.tidyspace.pc5853b2a.ui.sorting.scene.dragTrace
 import com.example.tidyspace.pc5853b2a.ui.showrooms.*
 import com.pico.spatial.core.container.SpaceState
 import com.pico.spatial.core.container.getSelfSpaceState
+import com.pico.spatial.core.ecs.Entity
+import com.pico.spatial.core.ecs.GroundShadowComponent
 import com.pico.spatial.ui.platform.containers.closeStage
 import com.pico.spatial.ui.platform.stub.SpatialStubActivity
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.junit.After
 import org.junit.Assert.*
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import java.io.File
@@ -51,7 +56,8 @@ class SpaceModeNativeRuntimeTest {
             ui.mainClock.advanceTimeByFrame()
             runCatching { scene().isPrepared }.getOrDefault(false)
         }
-        waitFor("space-full")
+        waitFor("room-space-mode")
+        visibleUi { ui.onNodeWithTag("space-mode-controls").assertDoesNotExist() }
     }
     private fun waitFor(tag: String) {
         ui.waitUntil(180_000) {
@@ -93,7 +99,9 @@ class SpaceModeNativeRuntimeTest {
     private fun assertDraft(text: String)=visibleUi { nameField().assertTextContains(text) }
     private fun mode(mode: SpaceMode) {
         val start=SystemClock.elapsedRealtime()
-        click(if(mode==SpaceMode.Full) "space-full" else "space-shared")
+        // Exercise lifecycle transitions even on a page or active operation
+        // where the catalogue toggle is not available.
+        i.runOnMainSync { session.modes.request(mode) }
         try {
             ui.waitUntil(20_000) {
                 ui.mainClock.advanceTimeByFrame()
@@ -137,9 +145,81 @@ class SpaceModeNativeRuntimeTest {
     private fun captureCheckpoint(name: String) {
         if(InstrumentationRegistry.getArguments().getString("captureModes")!="true") return
         File(context.filesDir,"space-capture-request").writeText(name)
-        ui.waitUntil(30_000) {
+        ui.waitUntil(120_000) {
             ui.mainClock.advanceTimeByFrame()
-            File(context.filesDir,"space-capture-ack").run { exists() && readText()==name }
+            File(context.filesDir,"space-capture-ack").run { exists() && readText().trim()==name }
+        }
+    }
+
+    /** A real native window in both modes; drive the same room turn on device vsync. */
+    @Test fun profileRoomInBothSpaces() {
+        val args=InstrumentationRegistry.getArguments()
+        assumeTrue(args.getString("captureModes")=="true")
+        start()
+        val root=scene()
+        val vm=room()
+        val motion=args.getString("motion") ?: "turn"
+        val turn=motion.startsWith("turn")
+        if(motion=="turn-no-ground") i.runOnMainSync {
+            fun disableGroundCasters(entity: Entity) {
+                if(entity.components[GroundShadowComponent::class.java]!=null)
+                    entity.components.set(GroundShadowComponent(castsShadowEnabled=false,receivesShadowEnabled=true))
+                entity.getChildren().forEach(::disableGroundCasters)
+            }
+            disableGroundCasters(root.volume.roomRoot)
+        }
+        for(target in listOf(SpaceMode.Shared,SpaceMode.Full)) {
+            if(session.modes.state.value.mode!=target) mode(target)
+            ui.waitUntil(20_000) {
+                ui.mainClock.advanceTimeByFrame()
+                var presented=false
+                i.runOnMainSync { presented=root.presented }
+                presented
+            }
+            var first=0L
+            var lastYaw=0f
+            var frames=0
+            val callback=object : Choreographer.FrameCallback {
+                override fun doFrame(frameTimeNanos: Long) {
+                    if(first==0L) first=frameTimeNanos
+                    // Same 70-degree turntable sweep at any callback cadence.
+                    val yaw=(35.0*kotlin.math.sin((frameTimeNanos-first)/1e9)).toFloat()
+                    dragTrace("Tidy.profileTurn") {
+                        vm.onEvent(RoomAction.Transform(GrabDelta(Point3(0f,0f,0f),
+                            Rotation.yaw(yaw-lastYaw),pointerCount=2)))
+                        root.applyInput(vm.currentGame)
+                    }
+                    lastYaw=yaw
+                    frames++
+                    Choreographer.getInstance().postFrameCallback(this)
+                }
+            }
+            i.runOnMainSync {
+                assertTrue(root.presented)
+                if(turn) {
+                    vm.onEvent(RoomAction.Begin("@room"))
+                    root.applyInput(vm.currentGame)
+                    Choreographer.getInstance().postFrameCallback(callback)
+                }
+                if(motion=="hidden") root.volume.owner.enabled=false
+            }
+            try {
+                captureCheckpoint(target.name.lowercase())
+                assertEquals(target,session.modes.state.value.mode)
+                assertEquals(if(target==SpaceMode.Full) SpaceState.FULL_SPACE else SpaceState.SHARED_SPACE,
+                    context.getSelfSpaceState())
+            } finally {
+                i.runOnMainSync {
+                    if(turn) {
+                        Choreographer.getInstance().removeFrameCallback(callback)
+                        vm.onEvent(RoomAction.Cancel)
+                        root.applyInput(vm.currentGame)
+                    }
+                    if(motion=="hidden") root.volume.owner.enabled=true
+                    Log.i("TidySpaceProfile","mode=$target motion=$motion callbacks=$frames")
+                }
+            }
+            if(turn) assertTrue("Room turn did not receive device frames",frames>=90)
         }
     }
 
@@ -190,9 +270,7 @@ class SpaceModeNativeRuntimeTest {
         i.runOnMainSync {
             for(name in listOf("clean_bin","clean_stand","clean_stand_extra")+
                 CleanTool.entries.map { "clean_${it.name}" }+cleaningMess().map { it.id }) {
-                val entity=root.volume.roomRoot.findEntity(name)
-                assertNotNull("Expected existing scene node $name",entity)
-                assertFalse("Cleaning content must be hidden: $name",entity!!.enabled)
+                assertNull("Decorating should not build cleaning content: $name",root.volume.roomRoot.findEntity(name))
             }
         }
         repeat(2) {
@@ -217,7 +295,55 @@ class SpaceModeNativeRuntimeTest {
         assertEquals(original,vm.currentGame)
         assertSame(host,activity());assertSame(root,scene());assertEquals(1,root.buildCount)
         assertArrayEquals(before,prefs.readBytes())
-        record("direct-decorating","PASS: cleaning nodes hidden; tray button completed four real OS transitions; same window, models, layout, inventory and save bytes; retired cleaning action ignored.")
+        record("direct-decorating","PASS: cleaning nodes absent; tray button completed four real OS transitions; same window, models, layout, inventory and save bytes; retired cleaning action ignored.")
+    }
+
+    @Test fun tapsKeepCatalogueEnabledAndRealDragsBlockInBothSpaces() {
+        check(context.packageName.endsWith(".perftest")) { "Use isolated test preferences" }
+        start()
+        val vm=room();val root=scene()
+        val original=vm.currentGame
+        fun dispatch(action: RoomAction) {
+            i.runOnMainSync { vm.onEvent(action);root.applyInput(vm.currentGame) }
+            ui.mainClock.advanceTimeBy(80)
+        }
+        fun catalogue(enabled: Boolean) {
+            visibleUi {
+                for(tag in listOf("room-homes","room-showrooms")+
+                    CatalogueCategory.entries.map { "category-${it.name}" }) {
+                    val node=ui.onNodeWithTag(tag)
+                    if(enabled) node.assertIsEnabled() else node.assertIsNotEnabled()
+                }
+            }
+        }
+        val targets=original.items.filter { !it.packed }.map { it.spec.id }+
+            listOf("@room","@house:clock","@house:dimmer")+
+            original.items.filter { !it.packed && it.spec.kind in setOf(Furnishing.Woodfish,Furnishing.SingingBowl) }
+                .map { "@play:${it.spec.id}" }
+        for(space in listOf(SpaceMode.Shared,SpaceMode.Full)) {
+            mode(space)
+            for(id in targets) {
+                dispatch(RoomAction.Begin(id))
+                assertEquals(id,vm.currentGame.selectedId)
+                catalogue(true)
+                dispatch(RoomAction.Transform(GrabDelta(Point3(.001f,0f,0f),Rotation())))
+                catalogue(true)
+                dispatch(RoomAction.Cancel)
+                catalogue(true)
+            }
+            val item=original.items.first { !it.packed && it.spec.kind in setOf(Furnishing.Chair,Furnishing.Desk) }
+            dispatch(RoomAction.Begin(item.spec.id))
+            catalogue(true)
+            dispatch(RoomAction.Transform(GrabDelta(Point3(.03f,0f,0f),Rotation())))
+            catalogue(false)
+            dispatch(RoomAction.Transform(GrabDelta(Point3(-.03f,0f,0f),Rotation())))
+            catalogue(false)
+            dispatch(RoomAction.Cancel)
+            catalogue(true)
+        }
+        assertEquals(original.items,vm.currentGame.items)
+        assertEquals(original.playCounts,vm.currentGame.playCounts)
+        record("catalogue-taps","PASS: both spaces; ${targets.size} targets stay enabled on press and slight movement; real drags block until cancel; layout and toy counts retained.")
     }
 
     @Test fun nativeFullWindowCloseReturnsSharedWithSameProcessPageDraftAndPendingOperation() {
@@ -264,7 +390,7 @@ class SpaceModeNativeRuntimeTest {
             session.modes.state.value.mode==SpaceMode.Shared && !session.modes.state.value.switching
         }
         assertEquals(SpaceState.SHARED_SPACE,context.getSelfSpaceState())
-        visibleUi { ui.onNodeWithTag("space-shared").assertTextContains("共享空间 · 当前") }
+        visibleUi { ui.onNodeWithTag("room-space-mode").assertTextContains("进入全屏空间") }
         assertSame(host,activity());assertSame(root,scene());assertSame(vm,room())
         assertArrayEquals(before,prefs.readBytes())
         record("stage-close","PASS: system Stage close keeps native window, models, ViewModels and save; UI returns Shared.")
@@ -304,7 +430,7 @@ class SpaceModeNativeRuntimeTest {
             assertFalse(root.workbenchRoot.getVisualBounds(root.placementOwner,true,true).isEmpty())
         }
         assertEquals(1,root.buildCount)
-        waitFor("space-full")
+        waitForText("布置小屋")
         assertArrayEquals(before,prefs.readBytes())
         mode(SpaceMode.Full);mode(SpaceMode.Shared)
         record("sorting-close","PASS: sorting page, same models and pending grab survive Full native close; save bytes unchanged.")

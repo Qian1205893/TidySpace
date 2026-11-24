@@ -9,6 +9,9 @@ import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.runtime.saveable.SaveableStateRegistry
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.example.tidyspace.pc5853b2a.domain.model.SpaceMode
 import com.example.tidyspace.pc5853b2a.domain.usecase.SpaceModeController
@@ -26,6 +29,7 @@ import com.pico.spatial.ui.platform.containers.closeStage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import java.util.UUID
 
 const val FULL_SPACE_STAGE="TidyFullSpace"
@@ -143,6 +147,16 @@ fun SpaceSessionUi(key: String,content: @Composable ()->Unit) {
 fun BindSpaceWindow() {
     val session=rememberSpaceSession()
     val navigator=LocalSpatialNavigator.current
+    val lifecycle=LocalLifecycleOwner.current.lifecycle
+    // Mode synchronization belongs to the host, independent of visible controls.
+    LaunchedEffect(session,lifecycle) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while(true) {
+                session.modes.observeSystemMode()
+                delay(500)
+            }
+        }
+    }
     DisposableEffect(session,navigator) {
         session.windowNavigator=navigator
         onDispose { if(session.windowNavigator===navigator) session.windowNavigator=null }

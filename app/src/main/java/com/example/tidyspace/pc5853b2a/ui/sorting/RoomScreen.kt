@@ -51,6 +51,9 @@ import com.pico.spatial.ui.foundation.gesture.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import com.pico.spatial.ui.platform.LocalPhysicalLengthConverter
 import com.pico.spatial.ui.platform.LengthUnit
 import androidx.compose.ui.Alignment
@@ -63,14 +66,22 @@ fun RoomScreen(onSorting: ()->Unit) {
     val context=LocalContext.current.applicationContext
     val factory=remember(context) { RoomViewModelFactory(context) }
     val room: RoomViewModel=viewModel(factory=factory)
-    val ui by room.state.collectAsStateWithLifecycle()
+    // Yaw is applied directly to the native scene. It does not change any
+    // Compose panel, so a continuous turn must not invalidate their content.
+    val panelState=remember(room) { room.state.map {
+        RoomPanelSnapshot(it.game.forPanels(),RoomCatalogueInteraction.blocks(it.game))
+    }.distinctUntilChanged() }
+    val panel by panelState.collectAsStateWithLifecycle(
+        RoomPanelSnapshot(room.currentGame.forPanels(),RoomCatalogueInteraction.blocks(room.currentGame)))
+    val game=panel.game
     var referenceOpen by rememberSaveable { mutableStateOf(false) }
     var personalOpen by rememberSaveable { mutableStateOf(false) }
     val showroomFactory=remember(context,room) { ShowroomViewModelFactory(context,room,
         if(personalOpen) ShowroomPage.Homes else ShowroomPage.Gallery) }
     val showrooms: ShowroomViewModel=viewModel(key="room-showrooms",factory=showroomFactory)
-    val homes by room.homes.collectAsStateWithLifecycle()
-    RoomContent(ui.game,{ room.currentGame },{ room.onUiEvent(RoomEvent.Act(it)) },onShowrooms={
+    val homeNames=remember(room) { room.homes.map { it?.active?.name ?: "我的小屋" }.distinctUntilChanged() }
+    val homeName by homeNames.collectAsStateWithLifecycle("我的小屋")
+    RoomContent(game,panel.catalogueBusy,room.state,{ room.currentGame },{ room.onUiEvent(RoomEvent.Act(it)) },onShowrooms={
         showrooms.open(personal=false)
         personalOpen=false
         referenceOpen=true
@@ -83,21 +94,32 @@ fun RoomScreen(onSorting: ()->Unit) {
         showrooms.open(personal=true)
         personalOpen=true
         referenceOpen=true
-    },homeName=homes?.active?.name ?: "我的小屋")
+    },homeName=homeName)
     if(referenceOpen) ShowroomScreen(room,showroomFactory) { referenceOpen=false }
 }
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun RoomContent(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)->Unit,onShowrooms: ()->Unit,onSorting: ()->Unit,
+private fun RoomContent(game: RoomGame,catalogueBusy: Boolean,sceneState: Flow<RoomUiState>,readGame: ()->RoomGame,send: (RoomAction)->Unit,onShowrooms: ()->Unit,onSorting: ()->Unit,
     onHomes: ()->Unit,homeName: String) {
     var revision by rememberSaveable { mutableIntStateOf(0) }
-    key(revision) { RoomSession(game,readGame,send,onShowrooms,onSorting,onHomes,homeName,revision) { revision++ } }
+    key(revision) { RoomSession(game,catalogueBusy,sceneState,readGame,send,onShowrooms,onSorting,onHomes,homeName,revision) { revision++ } }
 }
+
+private data class RoomPanelSnapshot(val game: RoomGame,val catalogueBusy: Boolean)
+
+private fun RoomGame.forPanels()=copy(
+    roomYaw=0f,playSequence=0,playEvent=null,celebration=0,
+    playCounts=if(journalOpen) playCounts else emptyMap(),
+    toyStates=if(journalOpen) toyStates else emptyMap(),
+    crankRadians=0f,toyGesture=ToyGesture(),gestureDistance=0f,gestureTurn=0f,
+    // Panels only use focus presence to show "收回"; actions read the real VM state.
+    focusId=focusId?.let { "@focused" },
+    message=if(cueVisible) message else "")
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)->Unit,onShowrooms: ()->Unit,onSorting: ()->Unit,
+private fun RoomSession(game: RoomGame,catalogueBusy: Boolean,sceneState: Flow<RoomUiState>,readGame: ()->RoomGame,send: (RoomAction)->Unit,onShowrooms: ()->Unit,onSorting: ()->Unit,
     onHomes: ()->Unit,homeName: String,revision: Int,retry: ()->Unit) {
         val session=rememberSpaceSession()
         val sceneKey="room-scene-$revision"
@@ -120,9 +142,10 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
         val catalogueWidth=units.dpToLength(1440.dp,LengthUnit.Meters)
         val actionsWidth=units.dpToLength(180.dp,LengthUnit.Meters)
         val journalWidth=units.dpToLength(570.dp,LengthUnit.Meters)
-        var echoEvent by remember { mutableStateOf<PlayEvent?>(null) }
+        val echoText=remember { mutableStateOf("") }
         val currentSend by rememberUpdatedState(send)
         val currentGame by rememberUpdatedState(game)
+        val currentCatalogueBusy by rememberUpdatedState(catalogueBusy)
         val currentRead by rememberUpdatedState(readGame)
         val density=LocalDensity.current
         val metersPerPixel=units.dpToLength(with(density) { 1f.toDp() },LengthUnit.Meters)
@@ -153,7 +176,7 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
             start={ item,point ->
                 val held=currentRead().cardDrag
                 if(held!=null && held.id==item.spec.id) held.token
-                else if(status!=SceneStatus.Ready || held!=null || currentRead().selectedId!=null) null
+                else if(status!=SceneStatus.Ready || held!=null || RoomCatalogueInteraction.blocks(currentRead())) null
                 else {
                     input.cancel()
                     val token=currentRead().cardSequence+1
@@ -196,38 +219,37 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
         }
         val tone=remember { runCatching { ToneGenerator(AudioManager.STREAM_MUSIC,35) }.getOrNull() }
         val audio=remember { RoomAudio(context) }
-        var heardPlay by remember { mutableLongStateOf(game.playSequence) }
-        var heard by remember { mutableIntStateOf(game.celebration) }
-        var heardCleaning by remember { mutableIntStateOf(game.cleaning?.count ?: 0) }
-        var heardHour by remember { mutableIntStateOf(game.dayHour.toInt()) }
         DisposableEffect(tone) { onDispose { tone?.release() } }
         DisposableEffect(audio) { onDispose { audio.close() } }
-        LaunchedEffect(game.celebration) {
-            if(game.celebration!=heard) { heard=game.celebration;tone?.startTone(ToneGenerator.TONE_PROP_ACK,180) }
-        }
-        LaunchedEffect(game.cleaning?.count) {
-            val count=game.cleaning?.count ?: 0
-            if(count>heardCleaning) audio.note(count-1)
-            heardCleaning=count
-        }
-        LaunchedEffect(game.cleaning?.sequence,game.cleaning?.tool,game.cleaning?.finished) {
-            audio.cleaning(game.cleaning)
-        }
-        LaunchedEffect(game.playSequence) {
-            if(game.playSequence!=heardPlay) {
-                heardPlay=game.playSequence
-                game.playEvent?.let { echoEvent=it;audio.strike(it) }
+        LaunchedEffect(sceneState,audio,lifecycle) {
+            var previous=currentRead()
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sceneState.collect { ui ->
+                    val live=ui.game
+                    if(live.celebration!=previous.celebration)
+                        tone?.startTone(ToneGenerator.TONE_PROP_ACK,180)
+                    val cleaned=live.cleaning?.count ?: 0
+                    if(cleaned>(previous.cleaning?.count ?: 0)) audio.note(cleaned-1)
+                    if(live.cleaning!=previous.cleaning) audio.cleaning(live.cleaning)
+                    if(live.playSequence!=previous.playSequence) live.playEvent?.let {
+                        echoText.value=when(it.kind) {
+                            Furnishing.Woodfish->"功德 +1"
+                            Furnishing.MusicBox->"♪  旋律 +1"
+                            Furnishing.SingingBowl->"清音 +1"
+                            else->it.feedback
+                        }
+                        audio.strike(it)
+                    }
+                    val hour=live.dayHour.toInt()
+                    if(live.selectedId=="@house:clock" && hour!=previous.dayHour.toInt()) audio.note(hour%7)
+                    val step=(live.crankRadians/(kotlin.math.PI.toFloat()/2)).toInt()
+                    val oldStep=(previous.crankRadians/(kotlin.math.PI.toFloat()/2)).toInt()
+                    if(step>0 && (step!=oldStep || live.selectedId!=previous.selectedId) &&
+                        live.items.any { "@play:${it.spec.id}"==live.selectedId && it.spec.kind==Furnishing.MusicBox })
+                        audio.note(step-1)
+                    previous=live
+                }
             }
-        }
-        LaunchedEffect(game.dayHour.toInt()) {
-            val hour=game.dayHour.toInt()
-            if(game.selectedId=="@house:clock" && hour!=heardHour) audio.note(hour%7)
-            heardHour=hour
-        }
-        val musicStep=(game.crankRadians/(kotlin.math.PI.toFloat()/2)).toInt()
-        LaunchedEffect(game.selectedId,musicStep) {
-            val item=game.items.find { "@play:${it.spec.id}"==game.selectedId }
-            if(item?.spec?.kind==Furnishing.MusicBox && musicStep>0) audio.note(musicStep-1)
         }
         DisposableEffect(scene) {
             session.bindResource(sceneKey,scene::detachHost)
@@ -263,7 +285,8 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                             scene.catalogueLayout(it.size.width.toFloat(),it.size.height.toFloat())
                         }) {
                         if(live.controlsVisible && currentStatus==SceneStatus.Ready) {
-                            RoomCatalogue(live,currentStatus,dispatch,cards,retry,onShowrooms,onHomes,homeName)
+                            RoomCatalogue(live,currentStatus,dispatch,cards,retry,onShowrooms,onHomes,homeName,
+                                interactionBusy=currentCatalogueBusy)
                         }
                     }
                 } } }
@@ -282,7 +305,7 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                                 dispatch(RoomAction.Begin("@room"))
                                 dispatch(RoomAction.Transform(GrabDelta(Point3(0f,0f,0f),Rotation.yaw(45f),pointerCount=2)))
                                 dispatch(RoomAction.End)
-                            },enabled=live.cardDrag==null && live.selectedId==null,
+                            },enabled=!currentCatalogueBusy,
                                 colors=IconButtonDefaults.iconButtonColors(
                                     containerColor=CatalogueColors.catalogPaper,contentColor=CatalogueColors.catalogInk)) {
                                 Icon(painterResource(R.drawable.ic_arrow_circle_right),contentDescription="转动小屋")
@@ -298,7 +321,7 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                         }
                 } } }
                 AttachmentPanel("house-cue") { PicoTheme { HouseCue(game) } }
-                AttachmentPanel("echo-0") { PicoTheme { PlayEcho(echoEvent) } }
+                AttachmentPanel("echo-0") { PicoTheme { PlayEcho(echoText.value) } }
             },
             initial={ content,attachments ->
                 scene.volume.content=content
@@ -318,7 +341,7 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                 } else {
                 scope.launch {
                     try {
-                        scene.build(currentGame) {
+                        scene.build(currentRead()) {
                             loadPhase=it
                             Log.i("TidyLoading","phase=$it visible=${scene.presented}")
                         }
@@ -347,13 +370,20 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                 attachments.entity("echo-0")?.let { scene.attachEcho(0,it,echoWidth) }
             },
         )
-        LaunchedEffect(scene,status) {
+        LaunchedEffect(scene,status,sceneState,lifecycle) {
             if(status==SceneStatus.Ready) {
                 Log.i("TidyUiPlane","ready center=${scene.catalogueCenter()} half=${scene.volume.windowHalf} roofGap=${scene.catalogueClearance()}")
                 try {
                     // A model load must finish before the next reconciliation. Restarting
                     // this coroutine on every grab update cancels native resource work.
-                    snapshotFlow { currentGame }.collect { next -> scene.synchronize(next) }
+                    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        sceneState.collect {
+                            // StateFlow can resume inline in the reducer. Let the
+                            // pointer transaction publish its native pose first.
+                            withFrameNanos { }
+                            scene.synchronize(currentRead())
+                        }
+                    }
                 } catch(e: CancellationException) {
                     throw e
                 } catch(e: Exception) {
@@ -372,8 +402,9 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                         if(last!=0L && c?.tool in setOf(CleanTool.Vacuum,CleanTool.Mop) && c?.finished==false) {
                             dispatch(RoomAction.CleanTick(((frame-last)/1_000_000_000.0).toFloat()))
                         }
-                        scene.animate(frame/1_000_000_000.0);last=frame
+                        last=frame
                     }
+                    scene.animate(frame/1_000_000_000.0)
                 }
             }
         }
@@ -381,47 +412,31 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
 
 @Composable
 private fun HouseCue(game: RoomGame) {
-    // Measure the attachment before a grab. Creating it on pointer-down
-    // resizes its Android window during the first interactive frame.
-    // RoomScene also disables the hidden entity so it cannot intercept hits.
-    val alpha=remember { Animatable(0f) }
-    val text=when {
-        game.selectedId=="@house:clock"->"${RoomTime.label(game.dayHour)} · 沿表盘拨动，看窗外变换"
-        game.selectedId=="@house:dimmer"->"转动调亮暗 · 轻点开关灯"
-        else->game.message
-    }
-    LaunchedEffect(game.cueVisible,game.message,game.selectedId,game.guideVisible) {
-        if(!game.cueVisible) {
-            alpha.snapTo(0f)
-            return@LaunchedEffect
+    // A disabled Spatial attachment must not keep producing changed textures.
+    // Freeze its last visible content; native opacity owns the fade.
+    var text by remember { mutableStateOf("") }
+    if(game.cueVisible) {
+        text=when {
+            game.saveError->"保存未成功，下次操作会重试。"
+            game.selectedId=="@house:clock"->"${RoomTime.label(game.dayHour)} · 沿表盘拨动，看窗外变换"
+            game.selectedId=="@house:dimmer"->"转动调亮暗 · 轻点开关灯"
+            else->game.message
         }
-        alpha.snapTo(1f)
-        delay(3800)
-        alpha.animateTo(0f,tween(800))
     }
-    Box(Modifier.size(800.dp,230.dp).alpha(if(game.cueVisible) alpha.value else 0f)
+    Box(Modifier.size(800.dp,230.dp)
         .background(PicoTheme.colorScheme.fillSecondary,RoundedCornerShape(24.dp)).padding(16.dp),
         contentAlignment=androidx.compose.ui.Alignment.Center) {
-        Text(if(game.saveError) "保存未成功，下次操作会重试。" else text,maxLines=3,
+        Text(text,maxLines=3,
             style=PicoTheme.typography.bodyLarge.copy(fontSize=44.sp,lineHeight=58.sp),
             color=PicoTheme.colorScheme.labelPrimary)
     }
 }
 
 @Composable
-private fun PlayEcho(event: PlayEvent?) {
-    val alpha=remember { Animatable(0f) }
-    LaunchedEffect(event?.sequence) {
-        alpha.snapTo(if(event==null) 0f else 1f)
-        if(event!=null) { delay(250);alpha.animateTo(0f,tween(750)) }
-    }
-    Box(Modifier.size(420.dp,84.dp).alpha(alpha.value),contentAlignment=androidx.compose.ui.Alignment.Center) {
-        Text(when(event?.kind) {
-            Furnishing.Woodfish->"功德 +1"
-            Furnishing.MusicBox->"♪  旋律 +1"
-            Furnishing.SingingBowl->"清音 +1"
-            else->event?.feedback ?: ""
-        },style=PicoTheme.typography.titleLarge.copy(fontSize=42.sp,lineHeight=56.sp),
+private fun PlayEcho(text: String) {
+    // Native opacity fades the existing panel without redrawing its texture.
+    Box(Modifier.size(420.dp,84.dp),contentAlignment=androidx.compose.ui.Alignment.Center) {
+        Text(text,style=PicoTheme.typography.titleLarge.copy(fontSize=42.sp,lineHeight=56.sp),
             color=PicoTheme.colorScheme.labelPrimary)
     }
 }

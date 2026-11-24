@@ -3,6 +3,7 @@ package com.example.tidyspace.pc5853b2a.ui.sorting.scene
 import android.util.Log
 import com.example.tidyspace.pc5853b2a.domain.model.*
 import com.pico.spatial.core.ecs.Entity
+import com.pico.spatial.core.ecs.OpacityControllerComponent
 import com.pico.spatial.core.ecs.TransformComponent
 import com.pico.spatial.core.math.EulerAngles
 import com.pico.spatial.core.math.Vector3
@@ -28,7 +29,7 @@ internal class RoomScene {
     private val objects=mutableMapOf<String,Entity>()
     private val furniture=RoomFurniture(targets,library)
     private val playthings=PlaythingAnimator()
-    private val architecture=RoomRenovation(targets,library)
+    private val architecture=RoomRenovation(targets,library,includeCleaning=false)
     private val architectureRoot=node().also { volume.roomRoot.addChild(it) }
     private lateinit var beacon: Entity
     private lateinit var destination: Entity
@@ -36,7 +37,11 @@ internal class RoomScene {
     private var state=RoomGame()
     private var readGame: (() -> RoomGame)?=null
     private var inputRevision=0L
+    private var lastInput: RoomGame?=null
+    private var synchronizedGame: RoomGame?=null
     private var cue: Entity?=null
+    private var cueKey: Triple<String,String?,Boolean>?=null
+    private var cueStarted=0.0
     private val cueAnchor=node().also { volume.roomRoot.addChild(it) }
     private var clock=0.0
     private var ready=false
@@ -210,7 +215,10 @@ internal class RoomScene {
         if(labels[index]==entity) return
         volume.roomRoot.addChild(entity)
         transform.scaleVector=Vector3(.55f/width)
-        entity.enabled=false
+        // Keep the attachment consumer alive. Disabling it while Compose submits
+        // a feedback texture makes HWUI wait for a spatial buffer release.
+        entity.components.set(OpacityControllerComponent(0f))
+        entity.enabled=true
         labels[index]=entity
     }
     fun attachCue(entity: Entity,width: Float) {
@@ -218,6 +226,7 @@ internal class RoomScene {
         if(cue==entity) return
         cueAnchor.addChild(entity)
         transform.scaleVector=Vector3(.95f/width)
+        entity.components.set(OpacityControllerComponent(1f))
         entity.enabled=(readGame?.invoke() ?: state).cueVisible
         cue=entity
     }
@@ -317,6 +326,8 @@ internal class RoomScene {
         dragTrace("Tidy.applyInput") {
         state=game;inputRevision++
         if(!ready) { positionCatalogue();return }
+        lastInput=game
+        observePlay(game)
         // Convert the held UI mesh through this frame's room transform.
         volume.rotate(game.roomYaw)
         positionCatalogue()
@@ -386,6 +397,13 @@ internal class RoomScene {
         }
     }
     internal fun positionCue(game: RoomGame) {
+        val key=if(game.cueVisible) Triple(game.message,game.selectedId,game.saveError) else null
+        if(key!=cueKey) {
+            cueKey=key
+            cueStarted=android.os.SystemClock.uptimeMillis()/1000.0
+            cue?.takeIf { it.components[TransformComponent::class.java]!=null }
+                ?.components?.get(OpacityControllerComponent::class.java)?.opacity=1f
+        }
         cue?.takeIf { it.components[TransformComponent::class.java]!=null }
             ?.let { updates.enabled(it,game.cueVisible) }
         val point=when {
@@ -462,6 +480,14 @@ internal class RoomScene {
     suspend fun synchronize(snapshot: RoomGame) {
         if(!ready) return
         var latest=readGame?.invoke() ?: snapshot
+        val previous=synchronizedGame
+        if(latest===lastInput && previous!=null && latest.roomYaw!=previous.roomYaw &&
+            latest.copy(roomYaw=previous.roomYaw)==previous) {
+            // The synchronous input path already applied this turn; object
+            // membership, inventory, lights and mechanisms are unchanged.
+            synchronizedGame=latest
+            return
+        }
         while(true) {
             val revision=inputRevision
             val current=furniture.reconcile(visibleItems(latest)) { item ->
@@ -511,37 +537,56 @@ internal class RoomScene {
             }
         }
         updatePlacementCue(game)
-        if(game.playSequence!=seenPlay) {
-            seenPlay=game.playSequence
-            game.playEvent?.let { echoes[0]=Echo(it,clock) }
+        observePlay(game)
+        synchronizedGame=game
+    }
+    private fun observePlay(game: RoomGame) {
+        if(game.playSequence==seenPlay) return
+        seenPlay=game.playSequence
+        game.playEvent?.let {
+            echoes[0]=Echo(it,android.os.SystemClock.uptimeMillis()/1000.0)
+            labels[0]?.components?.get(OpacityControllerComponent::class.java)?.opacity=1f
         }
     }
     fun animate(seconds: Double) {
         if(!ready) return
+        if(cueKey!=null) cue?.takeIf { it.components[TransformComponent::class.java]!=null }?.let { panel ->
+            val opacity=(1.0-(seconds-cueStarted-3.8)/.8).toFloat().coerceIn(0f,1f)
+            panel.components[OpacityControllerComponent::class.java]?.let {
+                if(it.opacity!=opacity) it.opacity=opacity
+            }
+        }
         clock=seconds
         furniture.updatePreviewFacing(state)
         architecture.animate(seconds)
         playthings.frame(state,furniture.parts,seconds)
-        // Mechanisms reset from state each frame, so cancel/delete never leaves an animation.
-        state.items.forEach { item ->
-            val id=item.spec.id
-            val age=echoes.filterNotNull().filter { it.event.id==id }
-                .maxByOrNull { it.event.sequence }?.let { seconds-it.start } ?: 10.0
-            val hit=if(age in 0.0.. .28) sin(age/.28*PI).toFloat() else 0f
-            furniture.parts["$id:woodfish_hammer"]?.let { updates.angles(it,EulerAngles(pitch=-hit*24f)) }
-            furniture.parts["$id:bowl_striker"]?.let { updates.angles(it,EulerAngles(pitch=-hit*18f)) }
-            val cranking=state.selectedId=="@play:$id"
-            val turn=if(cranking) state.crankRadians*180f/PI.toFloat()
-                else if(age in 0.0.. .6) (sin(age/.6*PI/2)*90).toFloat() else 0f
-            furniture.parts["$id:musicbox_crank"]?.let { updates.angles(it,EulerAngles(pitch=turn)) }
-            furniture.parts["$id:musicbox_rotor"]?.let { updates.angles(it,EulerAngles(yaw=turn)) }
+        val echo=echoes[0]
+        val echoAge=echo?.let { seconds-it.start } ?: Double.POSITIVE_INFINITY
+        val echoId=echo?.event?.id?.takeIf { echoAge in 0.0..1.0 }
+        val held=state.selectedId?.takeIf { it.startsWith("@play:") }?.substringAfter(':')
+        // Touch only the current targets and reset those that just stopped.
+        lastEchoId?.takeIf { it!=echoId && it!=held }?.let { animateMechanism(it,0f,0f) }
+        lastHeldId?.takeIf { it!=held && it!=echoId && it!=lastEchoId }?.let { animateMechanism(it,0f,0f) }
+        echoId?.let {
+            val hit=if(echoAge<=.28) sin(echoAge/.28*PI).toFloat() else 0f
+            val turn=if(held==it) state.crankRadians*180f/PI.toFloat()
+                else if(echoAge<=.6) (sin(echoAge/.6*PI/2)*90).toFloat() else 0f
+            animateMechanism(it,hit,turn)
         }
+        held?.takeIf { it!=echoId }?.let { animateMechanism(it,0f,state.crankRadians*180f/PI.toFloat()) }
+        lastEchoId=echoId
+        lastHeldId=held
         echoes.forEachIndexed { index,echo ->
             val age=echo?.let { seconds-it.start } ?: 10.0
-            val item=state.items.find { it.spec.id==echo?.event?.id }
+            val item=echo?.takeIf { age in 0.0..1.0 }?.let { active ->
+                state.items.find { it.spec.id==active.event.id }
+            }
             val active=item!=null && age in 0.0..1.0
             labels[index]?.takeIf { it.components[TransformComponent::class.java]!=null }?.let { label ->
-                updates.enabled(label,active)
+                val opacity=if(active) (if(age<=.25) 1f else ((1.0-age)/.75).toFloat()).coerceIn(0f,1f) else 0f
+                label.components[OpacityControllerComponent::class.java]?.let {
+                    if(it.opacity!=opacity) it.opacity=opacity
+                }
                 if(active) {
                     val p=checkNotNull(item).position
                     label.transform.position=Vector3(p.x,p.y+item.spec.size.y/2+.055f+(age*.07).toFloat(),p.z+.012f)
@@ -561,6 +606,14 @@ internal class RoomScene {
         }
         if(beacon.enabled) updates.scale(beacon,Vector3((1.0+.09*sin(seconds*3.8)).toFloat(),1f,(1.0+.09*sin(seconds*3.8)).toFloat()))
     }
+    private var lastEchoId: String?=null
+    private var lastHeldId: String?=null
+    private fun animateMechanism(id: String,hit: Float,turn: Float) {
+        furniture.parts["$id:woodfish_hammer"]?.let { updates.angles(it,EulerAngles(pitch=-hit*24f)) }
+        furniture.parts["$id:bowl_striker"]?.let { updates.angles(it,EulerAngles(pitch=-hit*18f)) }
+        furniture.parts["$id:musicbox_crank"]?.let { updates.angles(it,EulerAngles(pitch=turn)) }
+        furniture.parts["$id:musicbox_rotor"]?.let { updates.angles(it,EulerAngles(yaw=turn)) }
+    }
     fun validate()=volume.validate()
     fun destroy() {
         conceal()
@@ -570,6 +623,7 @@ internal class RoomScene {
         volume.destroy()
         library.close();updates.close()
         objects.clear();targets.clear()
+        lastInput=null;synchronizedGame=null
         resources.close();playthings.close()
         labels.clear();ripples.clear();echoes.fill(null)
     }

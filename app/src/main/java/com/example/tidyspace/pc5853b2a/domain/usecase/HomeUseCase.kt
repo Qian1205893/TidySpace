@@ -34,6 +34,14 @@ class HomeUseCase(
 
     fun activeGame(): RoomGame=withShared(library.active.game,library)
     fun save(game: RoomGame,session: ShowroomSession): HomeLibrary=publish(saved(library,game,session))
+    fun saveInteractive(game: RoomGame,session: ShowroomSession,complete: (Result<Unit>)->Unit): HomeLibrary {
+        check(readFailure==null) { "已有小屋存档无法读取，原始数据已保留；请先重试读取。" }
+        val next=saved(library,game,session)
+        // Keep edits available for retry and subsequent interactions while I/O runs.
+        current=next
+        repository.saveInteractive(next,complete)
+        return next
+    }
     fun rename(id: String,name: String,game: RoomGame,session: ShowroomSession): HomeLibrary {
         require(validName(name)) { "名称请输入 1–20 个字。" }
         require(library.homes.any { it.id==id })

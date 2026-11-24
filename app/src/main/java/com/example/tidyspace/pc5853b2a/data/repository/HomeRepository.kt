@@ -4,11 +4,19 @@ import android.content.Context
 import com.example.tidyspace.pc5853b2a.domain.model.*
 import org.json.JSONArray
 import org.json.JSONObject
+import android.os.Handler
+import android.os.Looper
+import android.os.Trace
+import java.util.concurrent.Executors
 
 interface HomeRepository {
     fun load(): HomeLibrary?
     /** Library and compatibility mirror must commit together or throw. */
     fun save(library: HomeLibrary)
+    /** Completion runs on the caller/UI thread. Structural operations still use save(). */
+    fun saveInteractive(library: HomeLibrary,complete: (Result<Unit>)->Unit) {
+        complete(runCatching { save(library) })
+    }
 }
 
 class LocalHomeRepository(context: Context,preferenceName: String="tidy-room"): HomeRepository {
@@ -17,6 +25,33 @@ class LocalHomeRepository(context: Context,preferenceName: String="tidy-room"): 
         prefs.getString(KEY,null)?.let { HomeLibraryCodec.decode(it) }
 
     override fun save(library: HomeLibrary) {
+        // Serialize transactional operations behind any pending interaction saves.
+        writer.submit<Unit> { write(library) }.get()
+    }
+    private data class Pending(val library: HomeLibrary,val complete: (Result<Unit>)->Unit)
+    private val lock=Any()
+    private var pending: Pending?=null
+    private var draining=false
+    override fun saveInteractive(library: HomeLibrary,complete: (Result<Unit>)->Unit) {
+        synchronized(lock) {
+            // The newest immutable snapshot includes all earlier play counts.
+            pending=Pending(library,complete)
+            if(draining) return
+            draining=true
+            writer.execute {
+                while(true) {
+                    val job=synchronized(lock) {
+                        pending.also { pending=null;if(it==null) draining=false }
+                    } ?: break
+                    val result=runCatching { write(job.library) }
+                    main.post { job.complete(result) }
+                }
+            }
+        }
+    }
+    private fun write(library: HomeLibrary) {
+        Trace.beginSection("Tidy.saveLibrary")
+        try {
         val encoded=HomeLibraryCodec.encode(library)
         // Validate every snapshot before publishing a new index. Unknown formats
         // and corrupt originals are never replaced by an empty room.
@@ -29,9 +64,19 @@ class LocalHomeRepository(context: Context,preferenceName: String="tidy-room"): 
         if(expansion==null) editor.remove(CleaningExpansionPersistence.KEY)
         else editor.putString(CleaningExpansionPersistence.KEY,expansion)
         check(editor.commit()) { "小屋未能保存" }
+        } finally { Trace.endSection() }
     }
 
-    companion object { const val KEY="home-library-v1" }
+    companion object {
+        const val KEY="home-library-v1"
+        private val writer=Executors.newSingleThreadExecutor { task ->
+            Thread({
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND)
+                task.run()
+            },"TidySave")
+        }
+        private val main=Handler(Looper.getMainLooper())
+    }
 }
 
 object HomeLibraryCodec {

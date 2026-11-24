@@ -37,14 +37,22 @@ class RoomViewModel(initial: RoomGame,initialShowrooms: ShowroomSession,
     private val homesMutable=MutableStateFlow(homeRules?.library)
     val homes=homesMutable.asStateFlow()
     val deletedHomeName get()=homeRules?.undoName
+    private var saveSequence=0L
+    internal var saveInFlight=false
+        private set
     private fun persist(game: RoomGame,session: ShowroomSession=showroomMutable.value) {
-        if(homeRules!=null) homesMutable.value=homeRules.save(game,session)
-        else if(saveAll!=null) saveAll.invoke(game,session) else saveGame(game)
+        saveSequence++
+        try {
+            if(homeRules!=null) homesMutable.value=homeRules.save(game,session)
+            else if(saveAll!=null) saveAll.invoke(game,session) else saveGame(game)
+        } finally { saveInFlight=false }
     }
     private fun homeOperation(changeGame: Boolean,operation: (HomeUseCase)->HomeLibrary): String? {
         val h=homeRules ?: return "多小屋存储暂时不可用。"
         return runCatching {
             val library=operation(h)
+            saveSequence++
+            saveInFlight=false
             homesMutable.value=library
             if(changeGame) {
                 undo.clear();redo.clear();grabStart=null
@@ -131,11 +139,29 @@ class RoomViewModel(initial: RoomGame,initialShowrooms: ShowroomSession,
             }
         }
         if(action==RoomAction.End || action==RoomAction.Cancel) grabStart=null
-        if(commit || action==RoomAction.Cancel || action==RoomAction.Undo || action==RoomAction.Redo || action==RoomAction.ToggleGuide) {
-            val saved=runCatching { persist(next) }.isSuccess
-            next=next.copy(saveError=!saved)
-        }
+        val save=commit || action==RoomAction.Cancel || action==RoomAction.Undo || action==RoomAction.Redo || action==RoomAction.ToggleGuide
         mutable.value=RoomUiState(next.copy(canUndo=undo.isNotEmpty(),canRedo=redo.isNotEmpty()))
+        if(save) {
+            val sequence=++saveSequence
+            saveInFlight=true
+            fun completed(result: Result<Unit>) {
+                if(sequence!=saveSequence) return
+                saveInFlight=false
+                val live=currentGame
+                if(live.saveError!=result.isFailure)
+                    mutable.value=RoomUiState(live.copy(saveError=result.isFailure))
+            }
+            val h=homeRules
+            if(h!=null) {
+                runCatching {
+                    homesMutable.value=h.saveInteractive(currentGame,showroomMutable.value,::completed)
+                }.onFailure { completed(Result.failure(it)) }
+            } else {
+                completed(runCatching {
+                    if(saveAll!=null) saveAll.invoke(currentGame,showroomMutable.value) else saveGame(currentGame)
+                })
+            }
+        }
     }
     private fun layout(s: RoomGame)=listOf(s.items,s.crateOpen,s.lampOn,s.drawerOpen,s.roomYaw,s.mood,s.boxStock,s.indoorBrightness,s.dayHour)
     private fun history(s: RoomGame,from: ArrayDeque<RoomGame>,to: ArrayDeque<RoomGame>,message: String): RoomGame {

@@ -194,12 +194,14 @@ class RoomUseCase {
         }
         val travel=s.actionTravel+d.translation.y
         return when(s.selectedId) {
-            "@room" -> s.copy(roomYaw=(s.roomYaw+d.rotation.yaw())%360f)
-            "crate:lid" -> s.copy(actionTravel=travel)
+            "@room" -> s.copy(roomYaw=(s.roomYaw+d.rotation.yaw())%360f,
+                gestureTurn=s.gestureTurn+abs(d.rotation.yaw()))
+            "crate:lid" -> s.copy(actionTravel=travel,gestureDistance=s.gestureDistance+d.translation.length())
             "lamp:switch" -> s
             "desk:drawer" -> {
                 val local=s.item("desk").rotation.inverse().rotate(d.translation)
-                val next=s.copy(drawerOpen=(s.drawerOpen+local.z/.10f).coerceIn(0f,1f))
+                val next=s.copy(drawerOpen=(s.drawerOpen+local.z/.10f).coerceIn(0f,1f),
+                    gestureDistance=s.gestureDistance+d.translation.length())
                 if(RoomPhysics.mechanismsClear(next)) next else s.copy(message="抽屉前有物品挡住了，请先挪开。")
             }
             else -> s.selected?.let { selected ->

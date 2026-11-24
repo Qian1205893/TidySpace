@@ -204,7 +204,8 @@ internal class SharedVolume {
     }
     private fun refitYaw() {
         val corners=fitCorners ?: return
-        val rotated=corners.map { Rotation.yaw(yaw).rotate(it) }
+        val turn=Rotation.yaw(yaw)
+        val rotated=corners.map(turn::rotate)
         val placement=VolumePlacement.solveBounds(half.x,half.y,half.z,
             rotated.minOf { it.x },rotated.maxOf { it.x },
             rotated.minOf { it.y },rotated.maxOf { it.y },

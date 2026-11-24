@@ -35,6 +35,7 @@ import com.example.tidyspace.pc5853b2a.R
 import com.example.tidyspace.pc5853b2a.domain.model.*
 import com.example.tidyspace.pc5853b2a.domain.usecase.RoomCardDrop
 import com.example.tidyspace.pc5853b2a.ui.sorting.SceneStatus
+import com.example.tidyspace.pc5853b2a.ui.sorting.RoomCatalogueInteraction
 import com.example.tidyspace.pc5853b2a.ui.navigation.SpaceModeToggle
 import com.example.tidyspace.pc5853b2a.ui.theme.ShowroomColors
 import com.example.tidyspace.pc5853b2a.ui.theme.CottageColors
@@ -86,7 +87,8 @@ internal class CardGestureCallbacks(
 @Composable
 internal fun RoomCatalogue(game: RoomGame,status: SceneStatus,send: (RoomAction)->Unit,
                            gestures: CardGestureCallbacks,retry: ()->Unit,onShowrooms: ()->Unit={},
-                           onHomes: ()->Unit=onShowrooms,homeName: String="我的小屋") {
+                           onHomes: ()->Unit=onShowrooms,homeName: String="我的小屋",
+                           interactionBusy: Boolean=RoomCatalogueInteraction.blocks(game)) {
     var category by rememberSaveable { mutableStateOf<String?>(null) }
     var page by rememberSaveable { mutableIntStateOf(0) }
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
@@ -96,8 +98,7 @@ internal fun RoomCatalogue(game: RoomGame,status: SceneStatus,send: (RoomAction)
     val items=remember(inventory,chosen) { inventory.filter { chosen?.accepts(it.spec)==true } }
     val pages=ceil(items.size/7.0).toInt().coerceAtLeast(1)
     val safePage=page.coerceIn(0,pages-1)
-    val busy=game.cardDrag!=null || game.selectedId!=null
-    val ready=status==SceneStatus.Ready && !busy
+    val ready=status==SceneStatus.Ready && !interactionBusy
     val preview=remember(game.cardDrag,game.items,game.boxStock) { RoomCardDrop.preview(game) }
     val currentGestures by rememberUpdatedState(gestures)
     var preparedIds by remember { mutableStateOf(emptySet<String>()) }

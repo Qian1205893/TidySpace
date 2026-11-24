@@ -22,6 +22,8 @@ restart controls or a cleaning gate. `CleanAgain` must remain a no-op.
 
 Default to Shared Space. The catalogue tray's `SpaceModeToggle` enters a real
 Full Space via the existing `TidyFullSpace` Mixed Stage and can return to Shared.
+The corner space-switch Augment is removed; keep space-mode observation in
+`BindSpaceWindow` independent of the catalogue controls.
 Keep `SpaceSession` process-owned. Space switches and the native Full Space
 caption close must retain page, form drafts, active operations, scene models and
 save data; ordinary Shared Space close must not reopen the app.
@@ -40,6 +42,8 @@ Headset/native assertions do not substitute for a person wearing the headset.
 Single-hand room dragging must match catalogue extraction: use mapped local
 pointer XYZ, keep the initial grab offset, and apply only the shared outer
 window envelope. Do not clamp held objects to the floor, walls or furniture.
+Keep catalogue controls enabled on a press/tap. Disable them only after actual
+manipulation crosses the tap threshold or while a catalogue card is being held.
 Resolve support/collision on release; invalid placement or tracking loss restores
 the original layout and inventory. Raw tracked hand poses are reserved for
 two-hand yaw/squeeze and room turns. Rebaseline when joining/leaving the pair;

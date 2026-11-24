@@ -10,6 +10,7 @@ import com.pico.spatial.core.ecs.ModelComponent
 import com.pico.spatial.core.ecs.PointLightComponent
 import com.pico.spatial.core.ecs.resource.BlendingMode
 import com.pico.spatial.core.ecs.resource.PhysicallyBasedMaterial
+import com.pico.spatial.core.ecs.resource.UnlitMaterial
 import com.pico.spatial.core.math.Color4
 import com.pico.spatial.core.math.EulerAngles
 import com.pico.spatial.core.math.Vector3
@@ -18,7 +19,8 @@ import kotlin.math.*
 
 /** Blender geometry is retained once; only tool poses and mess visibility change. */
 internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
-                              private val library: RoomModelLibrary?=null) {
+                              private val library: RoomModelLibrary?=null,
+                              private val includeCleaning: Boolean=true) {
     private val entities=mutableMapOf<String,Entity>()
     private val particles=mutableListOf<Entity>()
     private lateinit var asset: Entity
@@ -30,6 +32,8 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
     private val flames=mutableListOf<Entity>()
     internal val fixtures=mutableMapOf<String,Entity>()
     private val controls=mutableMapOf<String,Entity>()
+    private val staticFinishes=mutableListOf<Pair<UnlitMaterial,Color4>>()
+    private var finishLight: Pair<Float,Float>?=null
     private val updates=SceneUpdates()
     private var lastFire=Double.NEGATIVE_INFINITY
     private var hour=Float.NaN
@@ -61,9 +65,15 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
         parent.addChild(gaming)
         // Replace only the old cube; the large, optimized architecture asset is retained.
         checkNotNull(asset.findEntity("clean_bin")).destroy(true)
-        val expanded=Entity.loadSuspend("asset://models/tidy-cleaning-expanded.glb")
-        parent.addChild(expanded)
-        fun required(id: String)=checkNotNull(expanded.findEntity(id) ?: asset.findEntity(id)) { "Missing renovation node: $id" }
+        val expanded=if(includeCleaning) Entity.loadSuspend("asset://models/tidy-cleaning-expanded.glb")
+            .also { parent.addChild(it) } else null
+        if(!includeCleaning) {
+            // The shipped route starts in decorating. Remove the cleaning roots
+            // embedded in the original asset before registering any components.
+            for(name in listOf("clean_stand","clean_Vacuum","clean_Broom","clean_Brush")+
+                cleaningMess().map { it.id }) asset.findEntity(name)?.destroy(true)
+        }
+        fun required(id: String)=checkNotNull(expanded?.findEntity(id) ?: asset.findEntity(id)) { "Missing renovation node: $id" }
         fun shadows(e: Entity,casts: Boolean=true) {
             if(e.components[ModelComponent::class.java]!=null)
                 e.components.set(GroundShadowComponent(castsShadowEnabled=casts,receivesShadowEnabled=true))
@@ -76,7 +86,7 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
         shadows(required("renovation_base"),casts=false)
         shadows(study,casts=false)
         shadows(gaming,casts=false)
-        shadows(expanded)
+        expanded?.let { shadows(it) }
         fun restoreNormalStrength(e: Entity) {
             e.components[ModelComponent::class.java]?.materials?.forEach { material ->
                 if(material is PhysicallyBasedMaterial && material.getName().startsWith("Atelier |")) {
@@ -92,6 +102,21 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
             e.getChildren().forEach(::restoreNormalStrength)
         }
         restoreNormalStrength(asset)
+        // The fixed shell uses textured unlit finishes with baked contact
+        // shading. Keep the day and dimmer cues without relighting it per pixel.
+        fun registerFinishes(root: Entity) {
+            val seen=mutableSetOf<String>()
+            fun visit(e: Entity) {
+                e.components[ModelComponent::class.java]?.materials?.forEach {
+                    if(it is UnlitMaterial && seen.add(it.getName())) staticFinishes+=it to it.getBaseColor()
+                }
+                e.getChildren().forEach(::visit)
+            }
+            visit(root)
+        }
+        registerFinishes(required("renovation_house"))
+        registerFinishes(study)
+        registerFinishes(gaming)
         RoomBalcony.complete(checkNotNull(asset.findEntity("renovation_balcony")),r)
         val additions=library?.load("tidy-moving-home")
             ?: Entity.loadSuspend("asset://models/tidy-moving-home.glb")
@@ -115,6 +140,31 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
         }
         if(library==null) additions.destroy(true)
         val base=required("renovation_base")
+        if(includeCleaning) buildCleaning(parent,r,::required)
+        sun=node().apply {
+            transform.eulerAngles=EulerAngles(pitch=-48f,yaw=-32f)
+            // Keep daylight and furniture grounding, but avoid a full
+            // directional shadow-map pass over the miniature room.
+            components.set(DirectionalLightComponent(Color4(1f,.92f,.80f,1f),520f,castsShadowEnabled=includeCleaning))
+        }
+        bounce=node().apply {
+            transform.eulerAngles=EulerAngles(pitch=-28f,yaw=135f)
+            components.set(DirectionalLightComponent(Color4(.81f,.89f,1f,1f),180f,castsShadowEnabled=false))
+        }
+        parent.addChild(sun);parent.addChild(bounce)
+        hearthLight=node().apply {
+            transform.position=RoomLayout.point(Point3(-1.018f,-.225f,.29f)).vector()+Vector3(.082f,0f,0f)
+            components.set(PointLightComponent(Color4(1f,.38f,.10f,1f),3.2f,.62f))
+        }
+        ceilingLight=node().apply {
+            transform.position=RoomLayout.point(Point3(.45f,.535f,-.55f)).vector()
+            components.set(PointLightComponent(Color4(1f,.81f,.57f,1f),10f,2.20f))
+        }
+        parent.addChild(hearthLight);parent.addChild(ceilingLight)
+        Log.i("TidyRenovation","assets-ready cleaning=$includeCleaning full-floor=true")
+        return base
+    }
+    private suspend fun buildCleaning(parent: Entity,r: SceneResources,required: (String)->Entity) {
         for(tool in CleanTool.entries) {
             val root=required("clean_${tool.name}")
             entities["clean_${tool.name}"]=root
@@ -132,7 +182,12 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
         entities["bin_mouth_halo"]=required("bin_mouth_halo")
         entities["mop_head"]=required("mop_head")
         entities["clean_stand_extra"]=required("clean_stand_extra")
-        hit(entities.getValue("clean_bin"),"@clean:Bin",Vector3(.29f,.29f,.27f),Vector3(0f,-.14f,0f))
+        node().also { hit ->
+            entities.getValue("clean_bin").addChild(hit)
+            hit.transform.position=Vector3(0f,-.14f,0f)
+            interactive(hit,Vector3(.29f,.29f,.27f))
+            targets[hit]="@clean:Bin"
+        }
         targets[entities.getValue("clean_bin")]="@clean:Bin"
         entities["clean_stand"]=required("clean_stand")
         for(m in cleaningMess()) {
@@ -168,24 +223,6 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
                 delay(16)
             }
         }
-        sun=node().apply {
-            transform.eulerAngles=EulerAngles(pitch=-48f,yaw=-32f)
-            components.set(DirectionalLightComponent(Color4(1f,.92f,.80f,1f),520f,castsShadowEnabled=true))
-        }
-        bounce=node().apply {
-            transform.eulerAngles=EulerAngles(pitch=-28f,yaw=135f)
-            components.set(DirectionalLightComponent(Color4(.81f,.89f,1f,1f),180f,castsShadowEnabled=false))
-        }
-        parent.addChild(sun);parent.addChild(bounce)
-        hearthLight=node().apply {
-            transform.position=RoomLayout.point(Point3(-1.018f,-.225f,.29f)).vector()+Vector3(.082f,0f,0f)
-            components.set(PointLightComponent(Color4(1f,.38f,.10f,1f),3.2f,.62f))
-        }
-        ceilingLight=node().apply {
-            transform.position=RoomLayout.point(Point3(.45f,.535f,-.55f)).vector()
-            components.set(PointLightComponent(Color4(1f,.81f,.57f,1f),10f,2.20f))
-        }
-        parent.addChild(hearthLight);parent.addChild(ceilingLight)
         for(key in listOf("broom_bristles","brush_bristles")) entities[key]=required(key)
         repeat(16) {
             particles+=r.part(parent,r.sphere(),if(it<8) "cleanFoam" else "cleanDust").apply {
@@ -196,8 +233,6 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
         repeat(8) { trails+=r.part(parent,r.sphere(),"cleanFoam").apply {
             enabled=false;components.set(GroundShadowComponent(castsShadowEnabled=false,receivesShadowEnabled=false))
         } }
-        Log.i("TidyRenovation","assets-ready mess=${cleaningMess().size} trash=7 tools=4 hollow-bin=1 full-floor=true")
-        return base
     }
     fun mood(value: RoomMood)=time(RoomTime.hour(value))
     fun time(value: Float) {
@@ -217,6 +252,20 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
     fun synchronize(game: RoomGame) {
         state=game
         time(game.dayHour)
+        val key=game.dayHour to game.indoorBrightness
+        if(finishLight!=key && staticFinishes.isNotEmpty()) {
+            finishLight=key
+            val light=RoomTime.lighting(game.dayHour)
+            val daylight=(light.sun/520f).coerceIn(0f,1f)
+            val ambient=.40f+.49f*sqrt(daylight)
+            val warm=.16f*game.indoorBrightness*(1f-.4f*daylight)
+            for((material,base) in staticFinishes) {
+                material.setBaseColor(Color4(
+                    base.red*(ambient*(.66f+.34f*light.color.x)+warm),
+                    base.green*(ambient*(.66f+.34f*light.color.y)+warm*.76f),
+                    base.blue*(ambient*(.66f+.34f*light.color.z)+warm*.51f),base.alpha))
+            }
+        }
         updates.angles(controls.getValue("house_clock_needle"),EulerAngles(roll=-game.dayHour*15f))
         updates.angles(controls.getValue("house_dimmer_knob"),EulerAngles(roll=135f-game.indoorBrightness*270f))
         ceilingLight.components[PointLightComponent::class.java]?.let {
@@ -229,6 +278,7 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
     }
     /** The same update is called from input, before Compose receives the frame. */
     fun applyCleaning(game: RoomGame) {
+        if(!includeCleaning) return
         state=game
         val c=game.cleaning
         if(c==lastCleaning && game.decorating==lastDecorating) return
@@ -320,6 +370,7 @@ internal class RoomRenovation(private val targets: MutableMap<Entity,String>,
         hearthLight.components[PointLightComponent::class.java]?.intensity=
             (3.2+.24*kotlin.math.sin(seconds*5.7)+.13*kotlin.math.sin(seconds*9.3)).toFloat()
         }
+        if(!includeCleaning) return
         val age=seconds-sparkleTime
         particles.forEachIndexed { index,p ->
             val contact=lastContact
