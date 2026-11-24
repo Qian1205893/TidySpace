@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.example.tidyspace.pc5853b2a.domain.model.*
 import com.example.tidyspace.pc5853b2a.domain.usecase.RoomUseCase
 import com.example.tidyspace.pc5853b2a.domain.usecase.RoomProgress
-import com.example.tidyspace.pc5853b2a.domain.usecase.CleaningRules
+import com.example.tidyspace.pc5853b2a.domain.usecase.RoomEntry
 import com.example.tidyspace.pc5853b2a.data.repository.RoomPersistence
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,12 +20,11 @@ class RoomViewModel(initial: RoomGame,initialShowrooms: ShowroomSession,
         this(initial,initialShowrooms,saveAll,saveGame,null)
     constructor(initial: RoomGame,saveGame: (RoomGame)->Unit):this(initial,ShowroomSession(),null,saveGame)
     constructor(snapshot: String?=null,save: (String)->Unit={}):this(
-        RoomPersistence.decode(snapshot) ?: RoomGame(cleaning=CleaningState(),
-            message=CleaningRules.hint(CleaningState())),
+        RoomPersistence.decode(snapshot) ?: RoomGame(),
         { game -> save(RoomPersistence.encode(game)) })
     private val rules=RoomUseCase()
     private val mutable=MutableStateFlow(RoomUiState(
-        RoomProgress.settle(initial).copy(celebration=0)))
+        RoomProgress.settle(RoomEntry.prepare(initial)).copy(celebration=0)))
     val state=mutable.asStateFlow()
     /** Gesture callbacks read the reducer result immediately, before Compose collects it. */
     val currentGame: RoomGame get()=mutable.value.game
@@ -101,6 +100,8 @@ class RoomViewModel(initial: RoomGame,initialShowrooms: ShowroomSession,
     fun updateShowroomSession(session: ShowroomSession): Boolean = showroomCommit(currentGame,session)
     fun onUiEvent(event: RoomEvent) { when(event) { is RoomEvent.Act->onEvent(event.action) } }
     fun onEvent(action: RoomAction) {
+        // Retired action may arrive from an old host callback; it must never repack a home.
+        if(action==RoomAction.CleanAgain) return
         val current=mutable.value.game
         if(action==RoomAction.End && current.selectedId in setOf("@house:undo","@house:redo")) {
             val id=current.selectedId
@@ -116,7 +117,7 @@ class RoomViewModel(initial: RoomGame,initialShowrooms: ShowroomSession,
         val commit=action==RoomAction.End || action is RoomAction.Add || action==RoomAction.Duplicate ||
             action is RoomAction.CardRelease ||
             action==RoomAction.Recycle || action is RoomAction.Mood || action is RoomAction.Brightness ||
-            action is RoomAction.RotatePlaced || action==RoomAction.CleanAgain
+            action is RoomAction.RotatePlaced
         var next=when(action) {
             RoomAction.Undo -> history(current,undo,redo,"撤销了上一步。已获得的成就和灵感仍然保留。")
             RoomAction.Redo -> history(current,redo,undo,"重做完成，继续你的设计。")

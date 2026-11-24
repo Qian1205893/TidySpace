@@ -28,7 +28,7 @@ class ShowroomViewModel(rooms: List<Showroom>,private val room: RoomViewModel,
         fun transaction(error: String?,success: ShowroomPage=ShowroomPage.Applied) {
             if(error==null) { next=next.copy(page=success);pending=null }
             else {
-                val blocked=error.contains("放下") || error.contains("清洁") || error.contains("名称")
+                val blocked=error.contains("放下") || error.contains("名称")
                 next=next.copy(page=if(blocked) s.page else ShowroomPage.SaveError,message=error)
                 pending=if(blocked) null else e
             }
@@ -89,8 +89,7 @@ class ShowroomViewModel(rooms: List<Showroom>,private val room: RoomViewModel,
                 next=next.copy(page=if(error==null) ShowroomPage.Detail else s.page,message=error ?: "")
             }
             ShowroomEvent.Steps -> if(r!=null) {
-                if(!room.currentGame.decorating) next=next.copy(message="先完成第一关清洁，再开始搭建。")
-                else {
+                run {
                     val old=room.showroomSession.value
                     val session=old.copy(reference=r.id,tutorial=r.id,step=if(old.tutorial==r.id) old.step else 0)
                     if(persist(session)) next=next.copy(page=ShowroomPage.Steps)

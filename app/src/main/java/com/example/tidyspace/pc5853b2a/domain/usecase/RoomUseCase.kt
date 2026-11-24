@@ -5,6 +5,7 @@ import kotlin.math.*
 
 class RoomUseCase {
     fun reduce(before: RoomGame,a: RoomAction): RoomGame {
+        if(a==RoomAction.CleanAgain) return before
         when(a) {
             is RoomAction.CardBegin -> return RoomCardDrop.begin(before,a.id,a.token,a.facing)
             is RoomAction.CardMove -> return RoomCardDrop.move(before,a.token,a.point)
@@ -66,8 +67,6 @@ class RoomUseCase {
                 else->Unit
             }
         }
-        if(a==RoomAction.CleanAgain) return if(s.selectedId==null && s.decorating)
-            MovingHome.packAll(s).copy(cleaning=CleaningState(),message=CleaningRules.hint(CleaningState())) else s
         if(!s.decorating && (a is RoomAction.Mood || a is RoomAction.Brightness)) return act(s,a)
         if(!s.decorating && !(a is RoomAction.Begin && a.id=="@room") &&
             s.selectedId!="@room") {

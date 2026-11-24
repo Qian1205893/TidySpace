@@ -38,6 +38,14 @@ class RoomGestureInput(
     private var direction: Point3?=null
     private var waitingForRelease=false
     private var pendingDrag=Point3(0f,0f,0f)
+    private var needsBaseline=false
+
+    /** Resume the same transaction; the next pinch establishes a fresh tracking baseline. */
+    fun resumeSelection(id: String?) {
+        contacts.clear();objects.clear();tapped.clear()
+        selected=id;direction=null;waitingForRelease=false;needsBaseline=true
+    }
+    fun rebaseline() { needsBaseline=true }
     private fun trackingPose(sample: RoomContact)=
         if(contacts.size>=2) sample.pairPose else sample.objectPose
 
@@ -73,11 +81,12 @@ class RoomGestureInput(
         var consumed=selected!=null || tappedEvent
         // A release/join/source switch owns this frame. Refresh then rebaseline,
         // never apply a final single-hand move while the second hand is joining.
-        val changed=gestures.any { sample ->
+        val changed=needsBaseline || gestures.any { sample ->
             sample.phase==ContactPhase.Down && sample.id !in contacts ||
                 sample.phase==ContactPhase.Up && sample.id in contacts ||
                 contacts[sample.id]?.let { it.source!=sample.source }==true
         }
+        needsBaseline=false
         gestures.forEach { sample ->
             contacts[sample.id]?.let { original ->
                 contacts[sample.id]=sample.copy(target=original.target)
@@ -134,6 +143,11 @@ class RoomGestureInput(
             contacts[sample.id]=contact
             if(contacts.size==1) {
                 val pose=contact.objectPose
+                if(selected!=null) {
+                    if(pose!=null) objects.down(contact.id,pose)
+                    consumed=true
+                    return@forEach
+                }
                 if(contact.target!=null && pose!=null && pose.position.finite() && pose.rotation.finite) {
                     selected=contact.target;objects.down(contact.id,pose);pendingDrag=Point3(0f,0f,0f)
                     if(beginAt!=null) beginAt.invoke(contact.target,contact.hitPose ?: pose) else begin(contact.target)
@@ -197,5 +211,6 @@ class RoomGestureInput(
         if(selected!=null) cancelled()
         contacts.clear();tapped.clear();objects.clear();selected=null;direction=null;waitingForRelease=false
         pendingDrag=Point3(0f,0f,0f)
+        needsBaseline=false
     }
 }

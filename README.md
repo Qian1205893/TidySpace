@@ -1,12 +1,14 @@
 # 拾间 · TidySpace
 
 使用 PICO Spatial SDK 开发的 Android/Kotlin 空间小屋应用。当前默认运行于
-Shared Space，保留开放式房间、家具布置、清洁和收纳玩法。
+Shared Space，进入后直接布置开放式房间，并支持切换到 Full Space。
 
 ## 功能
 
 - 抓取、移动和旋转家具与小物；释放时处理支撑关系、碰撞和靠墙摆放。
-- 清洁工具、局部擦除、吸尘、纸屑与玩具反馈。
+- 无需打扫即可开始布置；旧存档自动跳过未完成的清洁，保留家具、库存和进度。
+- 在物品目录点击「进入全屏空间」进入 Full Space，点击「返回共享空间」退出。
+- 关闭 Full Space 的系统窗口后回到 Shared Space，保留当前页面和未完成的操作。
 - 多间个人小屋分别保存，可新建、重命名、复制和管理。
 - 12 套样板间供浏览和新建小屋使用。
 - 奶油色物品目录与小屋管理界面。
@@ -24,6 +26,7 @@ Shared Space，保留开放式房间、家具布置、清洁和收纳玩法。
 | ABI | arm64-v8a |
 | 应用 ID | com.example.tidyspace.pc5853b2a |
 | 默认容器 | DefaultWindowContainer / Volumetric / Shared Space |
+| 全屏空间 | TidyFullSpace / Mixed Stage |
 | 容器尺寸 | 6 × 4.5 × 6 米 |
 
 需要 Android SDK 和对应版本的 PICO Spatial SDK 开发环境。依赖仓库配置在
@@ -55,7 +58,9 @@ pico-cli app install app/build/outputs/apk/debug/app-debug.apk --replace --devic
 pico-cli app launch com.example.tidyspace.pc5853b2a --activity .platform.LaunchActivity --device DEVICE_ID
 ```
 
-覆盖安装可以保留原存档；卸载会删除应用数据。
+仅在应用 ID 和签名兼容时覆盖安装，才能保留原存档；卸载会删除应用数据。
+当前真机正式版使用独立发布证书，本地 debug 签名不能覆盖它。签名不兼容时使用
+独立 `.preview` 包验证，正式更新交由原签名者签署 release APK，禁止卸载绕过。
 
 ## 目录
 
@@ -72,9 +77,11 @@ pico-cli app launch com.example.tidyspace.pc5853b2a --activity .platform.LaunchA
 
 ## 验证
 
-2026-11-19 的 Shared Space 构建、Lint 和 330 项 JVM 测试通过。
-设备检查覆盖模型加载、小屋与样板间浏览、存档保留和空间模式回退。
-Full Space 曾作为对照试验，目前正式入口已恢复 Shared Space；
-短时性能采样尚未证明切换空间模式会稳定提升帧率。
+2026-11-24 的构建、Lint 和 355 项 JVM 测试通过，涵盖旧存档直接进入布置、
+多小屋及撤销快照迁移、清洁重开动作失效和空间模式状态管理。
+已修复旧 Stage 延迟销毁回调关闭新 Full Space 的竞态，空间状态以系统反馈为准。
+设备验证使用独立 preview 包，9 项原生检查全部通过；检查范围和发布注意事项见
+[更新记录](CHANGELOG.md)。
+Full Space 是可选的空间模式，未据此承诺帧率提升。
 
 原生断言和截图不替代实际佩戴时的手势、舒适度与性能体验。

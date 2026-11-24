@@ -70,6 +70,7 @@ class GrabTracker(private val uprightPair: Boolean=false) {
     }
     fun up(id: Long) { hands.remove(id);baselineValid=true }
     fun clear() { hands.clear();baselineValid=true }
+    fun rebaseline() { baselineValid=false }
     fun update(updates: Map<Long,HandPose>): GrabDelta? {
         if(hands.isEmpty()) return null
         val samplesValid=updates.filterKeys { it in hands }.values.all { it.position.finite() && it.rotation.finite }

@@ -59,7 +59,8 @@ class MovingHomeTest {
         assertEquals(uniqueCatalogue().size,clean.remainingGoods)
         assertEquals("box-home",MovingHome.reveal(clean,"box-home").previewBox)
         val replay=rules.reduce(clean,RoomAction.CleanAgain)
-        assertFalse(replay.decorating)
+        assertTrue(replay.decorating)
+        assertSame(clean,replay)
         assertEquals(start.boxStock,replay.boxStock)
     }
     @Test fun tappingShowsPreviewWhileDraggingMovesTheBox() {

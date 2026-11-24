@@ -31,17 +31,27 @@ class SortingScene {
     private val targets = mutableMapOf<Entity, SortingAction>()
     private var lastRecenter = -1
     private var built = false
+    val isBuilt get()=built
+    var buildCount=0
+        private set
+    private var panel: Entity?=null
     private var hoverId: String? = null
     private var currentGame = SortingGame()
     private var viewContent: SpatialViewContent? = null
     fun bind(content: SpatialViewContent) { viewContent=content;volume.content=content }
+    fun detachHost() {
+        panel?.removeFromParent();panel=null
+        viewContent?.removeEntity(placementOwner)
+        viewContent=null;volume.content=null
+    }
     fun localPointer(x: Float,y: Float,z: Float): Point3? =
         viewContent?.convertPosition(Vector3(x,y,z),ViewCoordinateSpace.Local,workbenchRoot)
             ?.let { Point3(it.x,it.y,it.z) }
     fun wallInteraction() = currentGame.selected?.surface == SortingSurface.Wall
 
     suspend fun build(game: SortingGame) {
-        check(!built)
+        if(built) return
+        buildCount++
         base=RoomArchitecture().build(workbenchRoot,resources,game.wall,game.levelIndex).also {
             interactive(it,Vector3(1.5f,.06f,1.12f))
         }
@@ -132,6 +142,7 @@ class SortingScene {
         } }
     }
     fun attach(panel: Entity, position: Vector3) {
+        this.panel=panel
         volume.attach(panel)
     }
     suspend fun synchronize(game: SortingGame) {

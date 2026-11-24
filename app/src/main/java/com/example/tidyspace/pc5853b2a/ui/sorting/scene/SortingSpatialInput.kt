@@ -17,4 +17,6 @@ internal class SortingSpatialInput(scene: SortingScene,send: (SortingAction)->Un
     )
     fun events(events: List<SpatialPointerInfo>)=input.events(events)
     fun cancel()=input.cancel()
+    fun resumeSelection(id: String?) { key=id ?: "";input.resumeSelection(id) }
+    fun rebaseline()=input.rebaseline()
 }

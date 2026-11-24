@@ -33,14 +33,16 @@ class CleaningRulesTest {
         next=move(next,CLEAN_BIN+Point3(0f,.13f,0f))
         return rules.reduce(next,RoomAction.End)
     }
-    @Test fun newPlayerStartsDirtyAndCannotFurnishOrOpenFurniture() {
+    @Test fun newPlayerStartsDirectlyInDecoratingAndCanOpenFurniture() {
         val vm=RoomViewModel()
-        assertFalse(vm.state.value.game.decorating)
+        assertTrue(vm.state.value.game.decorating)
+        assertNull(vm.state.value.game.cleaning)
         vm.onEvent(RoomAction.Add("chair"))
         vm.onEvent(RoomAction.Begin("crate:lid"))
-        assertEquals(13,vm.state.value.game.items.size)
-        assertNull(vm.state.value.game.selectedId)
-        assertFalse(vm.state.value.game.crateOpen)
+        assertEquals(14,vm.state.value.game.items.size)
+        assertEquals("crate:lid",vm.state.value.game.selectedId)
+        vm.onEvent(RoomAction.End)
+        assertTrue(vm.state.value.game.crateOpen)
     }
     @Test fun onlyMatchingToolCleansEachSurface() {
         assertEquals(0f,stroke(start(),CleanTool.Broom,"dust-0").cleaning!!.amount("dust-0"),0f)
@@ -134,15 +136,13 @@ class CleaningRulesTest {
         assertEquals(1,s.celebration)
         assertEquals(14,rules.reduce(s,RoomAction.Add("chair")).items.size)
     }
-    @Test fun finalSpotIsRequiredAndReplayKeepsFurniture() {
+    @Test fun legacyCompletionStillWorksButRetiredReplayCannotRepackFurniture() {
         val almost=start().copy(cleaning=CleaningState(progress=cleaningMess().drop(1).associate { it.id to 1f }))
         assertFalse(almost.decorating)
         val complete=stroke(almost,CleanTool.Vacuum,"dust-0")
         val replay=rules.reduce(complete,RoomAction.CleanAgain)
-        assertFalse(replay.decorating);assertEquals(0,replay.cleaning!!.count)
-        assertEquals(1,replay.items.count { it.spec.assetId=="chair" })
-        assertEquals(uniqueCatalogue().size,replay.remainingGoods)
-        assertTrue(replay.items.filter { it.spec.kind!=Furnishing.MovingBox }.all { it.packed })
+        assertTrue(replay.decorating)
+        assertSame(complete,replay)
     }
     @Test fun v6SavesPartialProgressAndRejectsFalseCompletion() {
         val partial=start().copy(cleaning=CleaningState(mapOf("dust-1" to .3f,"trash-2" to 1f)))

@@ -33,6 +33,8 @@
             <meta-data android:name="pico.spatial.windowcontainer.volumebasepanel" android:value="0" />
             <meta-data android:name="pico.spatial.windowcontainer.captionbar" android:value="0" />
         </activity>
+        <activity android:name=".platform.FullSpaceActivity" android:exported="false"
+            android:theme="@style/Theme.TidySpaceTheme" />
         <meta-data android:name="icon.3d.list" android:resource="@array/icon_3d_list" />
         <meta-data android:name="icon.sdf.list" android:resource="@array/icon_sdf_list" />
     </application>

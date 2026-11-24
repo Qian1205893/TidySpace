@@ -35,6 +35,7 @@ import com.example.tidyspace.pc5853b2a.R
 import com.example.tidyspace.pc5853b2a.domain.model.*
 import com.example.tidyspace.pc5853b2a.domain.usecase.RoomCardDrop
 import com.example.tidyspace.pc5853b2a.ui.sorting.SceneStatus
+import com.example.tidyspace.pc5853b2a.ui.navigation.SpaceModeToggle
 import com.example.tidyspace.pc5853b2a.ui.theme.ShowroomColors
 import com.example.tidyspace.pc5853b2a.ui.theme.CottageColors
 import com.pico.spatial.ui.design.*
@@ -126,7 +127,6 @@ internal fun RoomCatalogue(game: RoomGame,status: SceneStatus,send: (RoomAction)
             Text(when {
                 status==SceneStatus.Failed -> "房间未能打开"
                 status==SceneStatus.Loading -> "正在打开小屋…"
-                !game.decorating -> "第一关 · 清洁 ${game.cleaning?.percent ?: 0}%"
                 preview!=null -> preview.reason
                 preparationFailed -> "物品未能取出，请重试"
                 preparing -> "正在取出这一页的物品…"
@@ -165,11 +165,6 @@ internal fun RoomCatalogue(game: RoomGame,status: SceneStatus,send: (RoomAction)
                 }
             }
             when {
-                !game.decorating -> Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(12.dp)) {
-                    Text("打扫好，再慢慢安家",style=PicoTheme.typography.titleLarge,color=ink)
-                    Text("吸尘器 · 扫把 · 墙刷 · 湿拖把",style=label,color=ink)
-                    Text("工具贴近污迹；垃圾靠近桶口，桶沿亮起后松手。",style=label,color=ink)
-                }
                 mode=="灯光" -> Row(Modifier.weight(1f),horizontalArrangement=Arrangement.spacedBy(24.dp)) {
                     RoomMood.entries.forEach { mood -> Button(onClick={ send(RoomAction.Mood(mood)) },enabled=ready) {
                         Text(mood.label,style=label)
@@ -255,6 +250,7 @@ internal fun RoomCatalogue(game: RoomGame,status: SceneStatus,send: (RoomAction)
             Button(onClick={ send(RoomAction.Undo) },enabled=ready && game.canUndo) { Text("撤销") }
             Button(onClick={ send(RoomAction.Redo) },enabled=ready && game.canRedo) { Text("重做") }
             if(game.focusId!=null) Button(onClick={ send(RoomAction.Recycle) },enabled=ready) { Text("收回") }
+            SpaceModeToggle()
         }
     }
 }

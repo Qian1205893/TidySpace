@@ -54,12 +54,10 @@ private fun Detail(r: Showroom,game: RoomGame,send: (ShowroomEvent)->Unit,modifi
             Artwork("${r.id}-panorama",r.title+"整体全景",Modifier.fillMaxSize().padding(16.dp))
         }
         Text(r.brief,color=ShowroomColors.roomMuted,style=referenceBody())
-        if(!game.decorating) Text("完成第一间小屋的清洁后，即可新建小屋。",
-            color=ShowroomColors.roomMuted,style=referenceCaption())
         Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(12.dp)) {
             HomeButton("返回","showroom-back") { send(ShowroomEvent.Home) }
             Spacer(Modifier.weight(1f))
-            HomeButton("以此新建小屋","showroom-create-home",true,enabled=game.decorating) {
+            HomeButton("以此新建小屋","showroom-create-home",true) {
                 send(ShowroomEvent.CreateTemplateHome)
             }
         }

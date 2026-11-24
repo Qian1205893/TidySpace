@@ -41,6 +41,9 @@ internal class RoomScene {
     private var clock=0.0
     private var ready=false
     private var prepared=false
+    internal val isPrepared get()=prepared
+    internal var buildCount=0
+        private set
     /** Build a detached hierarchy; publish it to SpatialView only after preparation. */
     internal var presented: Boolean=false
         private set
@@ -52,6 +55,17 @@ internal class RoomScene {
         Log.i("TidyLoading","presented furnishings=${objects.size} ready=$prepared")
     }
     fun conceal() { volume.owner.enabled=false;presented=false }
+    /** Detach only the host-owned panels. Keep all models/resources in the session. */
+    fun detachHost() {
+        listOfNotNull(catalogue,catalogueActions,journal,cue).forEach {
+            updates.forget(it);it.removeFromParent()
+        }
+        labels.values.forEach { updates.forget(it);it.removeFromParent() }
+        catalogue=null;catalogueActions=null;journal=null;cue=null;labels.clear()
+        volume.content?.removeEntity(volume.owner)
+        volume.content=null
+        presented=false
+    }
     private val buildLock=Mutex()
     private var drawerBase: Vector3?=null
     private data class Echo(val event: PlayEvent,val start: Double)
@@ -410,6 +424,7 @@ internal class RoomScene {
             return@withLock
         }
         check(!presented)
+        buildCount++
         onProgress(RoomLoadPhase.Building)
         architecture.build(architectureRoot,resources)
         onProgress(RoomLoadPhase.Furnishing)

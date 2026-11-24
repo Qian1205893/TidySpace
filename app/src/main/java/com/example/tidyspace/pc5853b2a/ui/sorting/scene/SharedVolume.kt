@@ -270,6 +270,11 @@ internal class SharedSpatialInput(
     private val tracker=GrabTracker()
     private var selected: String?=null
     private var sampleNanos=0L
+    fun resumeSelection(id: String?) {
+        if(roomInput!=null) roomInput.resumeSelection(id)
+        else { selected=id;tracker.clear() }
+    }
+    fun rebaseline() { roomInput?.rebaseline();tracker.rebaseline();sampleNanos=0L }
     fun events(events: List<SpatialPointerInfo>): Boolean {
         roomInput?.let { input ->
             val now=System.nanoTime()

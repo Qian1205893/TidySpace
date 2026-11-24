@@ -21,6 +21,8 @@ import kotlinx.coroutines.CancellationException
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import com.pico.spatial.ui.foundation.gesture.detectSpatialPointerEvent
+import com.example.tidyspace.pc5853b2a.ui.navigation.rememberSpaceSession
+import com.example.tidyspace.pc5853b2a.ui.navigation.SpaceSessionUi
 
 @Composable
 fun SortingScreen() {
@@ -37,33 +39,48 @@ internal fun SortingContent(state: SortingUiState,onEvent: (SortingEvent)->Unit,
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 private fun SortingSceneContent(state: SortingUiState,onEvent: (SortingEvent)->Unit,onRoom: ()->Unit) {
-    val scene = remember { SortingScene() }
+    val session=rememberSpaceSession()
+    val sceneKey="sorting-scene-${state.sceneRevision}-${state.game.levelIndex}"
+    val scene = remember(session,sceneKey) { session.retain(sceneKey,::SortingScene) { it.destroy() } }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val currentEvent by rememberUpdatedState(onEvent)
     val input=remember(scene) { SortingSpatialInput(scene) {
         currentEvent(SortingEvent.Act(it))
-    } }
-    DisposableEffect(scene) { onDispose { input.cancel();scene.destroy() } }
+    }.also { it.resumeSelection(state.game.selectedId.takeIf { state.game.dragging }) } }
+    val spaceState by session.modes.state.collectAsState()
+    LaunchedEffect(spaceState.revision) { input.rebaseline() }
+    DisposableEffect(scene) {
+        session.bindResource(sceneKey,scene::detachHost)
+        onDispose {
+            if(!session.preserveInput) input.cancel()
+            session.releaseResource(sceneKey,retain=scene.isBuilt)
+        }
+    }
     SpatialView(
         modifier = Modifier.fillMaxSize().pointerInput(scene) {
             try {
                 detectSpatialPointerEvent(context,targetedToEntity=TargetEntity.any(),onEvent=input::events)
-            } finally { input.cancel() }
+            } finally { if(!session.preserveInput) input.cancel() }
         },
         attachments = {
-            AttachmentPanel("sorting-controls") { PicoTheme { SortingControls(state,onEvent,onRoom) } }
+            AttachmentPanel("sorting-controls") { SpaceSessionUi("sorting-controls") {
+                PicoTheme { SortingControls(state,onEvent,onRoom) }
+            } }
         },
         initial = { content,attachments ->
             content.addEntity(scene.placementOwner)
             scene.bind(content)
+            session.bindResource(sceneKey,scene::detachHost)
             attachments.entity("sorting-controls")?.let {
                 scene.attach(it,Vector3(0f,.91f,-.10f))
             }
+            if(scene.isBuilt) session.windowReady()
             scope.launch {
                 try {
                     scene.build(state.game)
                     currentEvent(SortingEvent.SceneReady)
+                    session.windowReady()
                 } catch(e: CancellationException) { throw e }
                 catch(e: Exception) {
                     Log.e("TidyScene","scene-load-failed",e)

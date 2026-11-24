@@ -13,6 +13,7 @@ import com.pico.spatial.ui.foundation.window.Augment
 import com.pico.spatial.ui.foundation.window.AugmentContentAlignment
 import com.pico.spatial.ui.foundation.window.WindowSizeBehaviors
 import com.pico.spatial.ui.foundation.effect3d.scale3D
+import com.example.tidyspace.pc5853b2a.ui.navigation.SpaceSessionUi
 
 /** SDK normalized anchors use 0..1, with the caption/user side at z=1. */
 internal object ShowroomPlacement {
@@ -41,10 +42,10 @@ fun ShowroomScreen(room: RoomViewModel,factory: ShowroomViewModelFactory,onClose
     Augment(anchor=ShowroomPlacement.anchor,alignment=AugmentContentAlignment.Center,
         offset=offset,windowSizeBehaviors=WindowSizeBehaviors.Adaptive,
         enableMaterialBackground=ShowroomPlacement.materialBackground) {
-        PicoTheme {
+        SpaceSessionUi("showroom") { PicoTheme {
             ShowroomContent(state,game.game,session,model::onEvent,onClose,
                 Modifier.scale3D(scaleX=ShowroomPlacement.readingScale,
                     scaleY=ShowroomPlacement.readingScale,scaleZ=1f),library,room.deletedHomeName)
-        }
+        } }
     }
 }

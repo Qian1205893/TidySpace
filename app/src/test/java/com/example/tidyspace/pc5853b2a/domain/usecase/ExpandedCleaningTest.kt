@@ -113,18 +113,18 @@ class ExpandedCleaningTest {
         assertEquals(state.items,restored.items)
         assertEquals(c.workTiles,restored.cleaning!!.workTiles)
     }
-    @Test fun typedSaveCommitsBothPartsAndCancelledWipeDoesNotCommitHalfWork() {
+    @Test fun oldCleaningToolEventsCannotRestartCleaningAfterEntryMigration() {
         var saved: RoomGame?=null
         val vm=RoomViewModel(fresh()) { saved=it }
         vm.onEvent(RoomAction.Begin("@clean:Mop"))
-        val p=cleaningMess().first { it.id=="spill-0" }.position
-        vm.onEvent(RoomAction.Transform(GrabDelta(p-vm.currentGame.cleaning!!.position,Rotation())))
+        vm.onEvent(RoomAction.Transform(GrabDelta(Point3(.1f,0f,0f),Rotation())))
         repeat(4) { vm.onEvent(RoomAction.CleanTick(.075f)) }
         assertNull(saved)
         vm.onEvent(RoomAction.Cancel)
         val restore=CleaningExpansionPersistence.restore(RoomPersistence.encode(saved!!),CleaningExpansionPersistence.encode(saved!!))!!
-        assertTrue(restore.cleaning!!.wetTiles.isEmpty())
-        assertEquals(0f,restore.cleaning!!.rawAmount("spill-0"),0f)
+        assertTrue(restore.decorating)
+        assertNull(restore.cleaning)
+        assertEquals(fresh().items,restore.items)
     }
     @Test fun corruptExtraDataCannotLoseFurnitureOrOldProgress() {
         val original=fresh().copy(cleaning=CleaningState(mapOf("debris-0" to 1f)))

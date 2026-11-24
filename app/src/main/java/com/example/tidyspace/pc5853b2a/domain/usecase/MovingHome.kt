@@ -82,7 +82,7 @@ object MovingHome {
             boxInventoryVersion=2,previewBox=null,extractionBox=null,selectedId=null,
             origin=null,mechanismOrigin=null,focusId=null,angleFocus=null,playCounts=counts,toyStates=toys,
             achievements=if(s.crateOpen) s.achievements+"guide-1" else s.achievements,
-            message=if(s.decorating) "第二关 · 每款只一件。软包脚凳和阳台长凳也在家具箱里，慢慢拆开安家。" else s.message)
+            message=if(s.decorating) "每款只一件。挑选喜欢的家具和小物，慢慢布置你的家。" else s.message)
     }
     fun reveal(s: RoomGame,box: String): RoomGame {
         if(!s.decorating || s.selectedId!=null || s.stock(box).isEmpty()) return s

@@ -24,10 +24,10 @@ class HomeUseCase(
         readFailure=loaded.exceptionOrNull()
         val home=SavedHome("migrated-primary-home",cleanName(session.title).takeUnless {
             it=="我的创意改造"
-        } ?: "我的小屋",committed(game),session,savedAt=clock())
-        current=loaded.getOrNull() ?: HomeLibrary(listOf(home),home.id,
-            game.achievements,game.playCounts,game.nextSerial,game.decorating)
-        if(loaded.isSuccess && loaded.getOrNull()==null)
+        } ?: "我的小屋",committed(RoomEntry.prepare(game)),session,savedAt=clock())
+        current=RoomEntry.prepare(loaded.getOrNull() ?: HomeLibrary(listOf(home),home.id,
+            game.achievements,game.playCounts,game.nextSerial,true))
+        if(loaded.isSuccess && loaded.getOrNull()!=current)
             migrationError=runCatching { publish(library) }.isFailure
         return library
     }
@@ -44,18 +44,16 @@ class HomeUseCase(
     fun switch(id: String,game: RoomGame,session: ShowroomSession): HomeLibrary {
         ready(game)
         val target=library.homes.firstOrNull { it.id==id } ?: error("这间小屋暂时无法打开。")
-        val prepared=StudyRenovation.prepare(MovingHome.prepare(target.game))
+        val prepared=RoomEntry.prepare(StudyRenovation.prepare(MovingHome.prepare(target.game)))
         val next=saved(library,game,session)
         return publish(next.copy(activeId=id,homes=next.homes.map { if(it.id==id)
             it.copy(game=committed(withShared(prepared,next))) else it }))
     }
     fun create(name: String,template: Showroom?,game: RoomGame,session: ShowroomSession): HomeLibrary {
         ready(game)
-        require(library.tutorialComplete || game.decorating) { "完成第一间小屋的清洁后，即可新建小屋。" }
         require(validName(name)) { "名称请输入 1–20 个字。" }
         val next=saved(library,game,session)
-        var blank=MovingHome.packAll(StudyRenovation.prepare(MovingHome.prepare(RoomGame(
-            cleaning=CleaningState().completed()),fresh=true))).copy(
+        var blank=MovingHome.packAll(StudyRenovation.prepare(MovingHome.prepare(RoomGame(),fresh=true))).copy(
                 achievements=next.achievements,playCounts=next.playCounts,nextSerial=next.nextSerial,
                 lampOn=true,guideVisible=false,toyStates=emptyMap(),roomYaw=game.roomYaw)
         if(template!=null) {
@@ -104,9 +102,10 @@ class HomeUseCase(
     fun retryRead(): HomeLibrary {
         if(readFailure==null) return library
         val loaded=repository.load() ?: error("已有小屋存档暂时无法读取。")
-        current=loaded
+        current=RoomEntry.prepare(loaded)
         readFailure=null
-        return loaded
+        if(current!=loaded) migrationError=runCatching { publish(library) }.isFailure
+        return library
     }
     val loadError get()=readFailure!=null
     private fun saved(l: HomeLibrary,game: RoomGame,session: ShowroomSession): HomeLibrary {
@@ -124,7 +123,8 @@ class HomeUseCase(
         require(game.selectedId==null && game.cardDrag==null) { "请先放下手中的物品。" }
     }
     private fun committed(game: RoomGame): RoomGame {
-        val stable=if(game.selectedId!=null || game.cardDrag!=null) RoomUseCase().reduce(game,RoomAction.Cancel) else game
+        val ready=RoomEntry.prepare(game)
+        val stable=if(ready.selectedId!=null || ready.cardDrag!=null) RoomUseCase().reduce(ready,RoomAction.Cancel) else ready
         return stable.copy(
         selectedId=null,origin=null,mechanismOrigin=null,ritual=null,cardDrag=null,
         focusId=null,angleFocus=null,previewBox=null,extractionBox=null,dragFacing=null,

@@ -140,12 +140,16 @@ class HomeUseCaseTest {
         rules.rename(rules.library.activeId,"相同名称",rules.activeGame(),ShowroomSession())
         assertEquals(2,rules.library.homes.map { it.id }.distinct().size)
     }
-    @Test fun unfinishedCleaningIsNotResetAndCannotCreateAnotherHouse() {
+    @Test fun unfinishedCleaningOpensForDecoratingAndCanCreateAnotherHouse() {
         val store=Store();val rules=rules(store);val dirty=game().copy(cleaning=CleaningState(progress=mapOf("dust-0" to .25f)))
         rules.initialize(dirty,ShowroomSession())
-        assertEquals(dirty.cleaning,rules.activeGame().cleaning)
-        assertTrue(runCatching { rules.create("第二间",null,rules.activeGame(),ShowroomSession()) }.isFailure)
-        assertFalse(rules.library.tutorialComplete)
+        assertNull(rules.activeGame().cleaning)
+        assertEquals(dirty.items,rules.activeGame().items)
+        assertEquals(dirty.boxStock,rules.activeGame().boxStock)
+        assertTrue(rules.library.tutorialComplete)
+        rules.create("第二间",null,rules.activeGame(),ShowroomSession())
+        assertEquals(2,rules.library.homes.size)
+        assertTrue(rules.library.homes.all { it.game.decorating })
     }
     @Test fun corruptExistingLibraryIsProtectedUntilSuccessfulRead() {
         val store=Store();store.unreadable=true

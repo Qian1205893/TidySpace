@@ -55,6 +55,8 @@ import com.pico.spatial.ui.platform.LocalPhysicalLengthConverter
 import com.pico.spatial.ui.platform.LengthUnit
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.onGloballyPositioned
+import com.example.tidyspace.pc5853b2a.ui.navigation.rememberSpaceSession
+import com.example.tidyspace.pc5853b2a.ui.navigation.SpaceSessionUi
 
 @Composable
 fun RoomScreen(onSorting: ()->Unit) {
@@ -74,7 +76,9 @@ fun RoomScreen(onSorting: ()->Unit) {
         referenceOpen=true
         Log.i("TidyShowrooms","catalogue-open-click")
     },onSorting={
-        room.onUiEvent(RoomEvent.Act(RoomAction.Cancel));onSorting()
+        if(room.currentGame.selectedId!=null || room.currentGame.cardDrag!=null)
+            room.onUiEvent(RoomEvent.Act(RoomAction.Cancel))
+        onSorting()
     },onHomes={
         showrooms.open(personal=true)
         personalOpen=true
@@ -87,15 +91,17 @@ fun RoomScreen(onSorting: ()->Unit) {
 @OptIn(ExperimentalFoundationApi::class)
 private fun RoomContent(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)->Unit,onShowrooms: ()->Unit,onSorting: ()->Unit,
     onHomes: ()->Unit,homeName: String) {
-    var revision by remember { mutableIntStateOf(0) }
-    key(revision) { RoomSession(game,readGame,send,onShowrooms,onSorting,onHomes,homeName) { revision++ } }
+    var revision by rememberSaveable { mutableIntStateOf(0) }
+    key(revision) { RoomSession(game,readGame,send,onShowrooms,onSorting,onHomes,homeName,revision) { revision++ } }
 }
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)->Unit,onShowrooms: ()->Unit,onSorting: ()->Unit,
-    onHomes: ()->Unit,homeName: String,retry: ()->Unit) {
-        val scene=remember { RoomScene() }
+    onHomes: ()->Unit,homeName: String,revision: Int,retry: ()->Unit) {
+        val session=rememberSpaceSession()
+        val sceneKey="room-scene-$revision"
+        val scene=remember(session,sceneKey) { session.retain(sceneKey,::RoomScene) { it.destroy() } }
         val lifecycle=LocalLifecycleOwner.current.lifecycle
         DisposableEffect(scene,lifecycle) {
             val observer=LifecycleEventObserver { _,event ->
@@ -137,13 +143,17 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
             scene.applyInput(currentRead())
         } }
         scene.bindState { currentRead() }
-        val input=remember { scene.input(dispatch) }
-        var status by remember { mutableStateOf(SceneStatus.Loading) }
+        val input=remember(scene) { scene.input(dispatch).also { it.resumeSelection(readGame().selectedId) } }
+        val spaceState by session.modes.state.collectAsState()
+        LaunchedEffect(spaceState.revision) { input.rebaseline() }
+        var status by remember { mutableStateOf(if(scene.isPrepared) SceneStatus.Ready else SceneStatus.Loading) }
         var loadPhase by remember { mutableStateOf(RoomLoadPhase.Building) }
         val currentStatus by rememberUpdatedState(status)
         val cards=remember(scene) { CardGestureCallbacks(
             start={ item,point ->
-                if(status!=SceneStatus.Ready || currentRead().cardDrag!=null || currentRead().selectedId!=null) null
+                val held=currentRead().cardDrag
+                if(held!=null && held.id==item.spec.id) held.token
+                else if(status!=SceneStatus.Ready || held!=null || currentRead().selectedId!=null) null
                 else {
                     input.cancel()
                     val token=currentRead().cardSequence+1
@@ -168,17 +178,20 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                 dispatch(RoomAction.CardRelease(token))
                 Log.i("TidyCard","release token=$token focus=${currentRead().focusId} stock=${currentRead().remainingGoods}")
             },
-            cancel={ token -> dispatch(RoomAction.CardCancel(token));Log.i("TidyCard","cancel token=$token") },
+            cancel={ token -> if(!session.preserveInput) {
+                dispatch(RoomAction.CardCancel(token));Log.i("TidyCard","cancel token=$token")
+            } },
             prepare={ specs -> specs.forEach { scene.preloadCard(it) } },
         ) }
         DisposableEffect(lifecycle,scene) {
             val observer=LifecycleEventObserver { _,event ->
-                if(event==Lifecycle.Event.ON_STOP) currentRead().cardDrag?.let { cards.cancel(it.token) }
+                if(event==Lifecycle.Event.ON_STOP && !session.preserveInput)
+                    currentRead().cardDrag?.let { cards.cancel(it.token) }
             }
             lifecycle.addObserver(observer)
             onDispose {
                 lifecycle.removeObserver(observer)
-                currentRead().cardDrag?.let { cards.cancel(it.token) }
+                if(!session.preserveInput) currentRead().cardDrag?.let { cards.cancel(it.token) }
             }
         }
         val tone=remember { runCatching { ToneGenerator(AudioManager.STREAM_MUSIC,35) }.getOrNull() }
@@ -216,7 +229,13 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
             val item=game.items.find { "@play:${it.spec.id}"==game.selectedId }
             if(item?.spec?.kind==Furnishing.MusicBox && musicStep>0) audio.note(musicStep-1)
         }
-        DisposableEffect(scene) { onDispose { input.cancel();scene.destroy() } }
+        DisposableEffect(scene) {
+            session.bindResource(sceneKey,scene::detachHost)
+            onDispose {
+                if(!session.preserveInput) input.cancel()
+                session.releaseResource(sceneKey,retain=scene.isPrepared)
+            }
+        }
         if(status!=SceneStatus.Ready) {
             RoomLoadingOverlay(loadPhase,status==SceneStatus.Failed,retry)
         }
@@ -232,10 +251,10 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                             { scene.inputPosition()?.let { Point3(it.x,it.y,it.z) } }) {
                             input.events(events)
                         }
-                    }) } finally { input.cancel() }
+                    }) } finally { if(!session.preserveInput) input.cancel() else input.rebaseline() }
                 },
             attachments={
-                AttachmentPanel("room-front-ui") { PicoTheme {
+                AttachmentPanel("room-front-ui") { SpaceSessionUi("room-front-ui") { PicoTheme {
                     // Read live Snapshot state inside the panel's own composition.
                     // Keep its texture bounded to the catalogue, leaving room hits clear.
                     val live=currentGame
@@ -247,7 +266,7 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                             RoomCatalogue(live,currentStatus,dispatch,cards,retry,onShowrooms,onHomes,homeName)
                         }
                     }
-                } }
+                } } }
                 AttachmentPanel("room-actions") { PicoTheme {
                         val live=currentGame
                         Row(Modifier.size(180.dp,72.dp),
@@ -271,18 +290,19 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                             }
                         }
                 } }
-                AttachmentPanel("room-journal") { PicoTheme {
+                AttachmentPanel("room-journal") { SpaceSessionUi("room-journal") { PicoTheme {
                         val live=currentGame
                         if(live.journalOpen) Box(Modifier.size(570.dp,780.dp)
                             .background(PicoTheme.colorScheme.fillSecondary,RoundedCornerShape(26.dp))) {
                             RoomJournal(live,dispatch,onSorting)
                         }
-                } }
+                } } }
                 AttachmentPanel("house-cue") { PicoTheme { HouseCue(game) } }
                 AttachmentPanel("echo-0") { PicoTheme { PlayEcho(echoEvent) } }
             },
             initial={ content,attachments ->
                 scene.volume.content=content
+                session.bindResource(sceneKey,scene::detachHost)
                 // Keep the hierarchy detached until every mesh and its fitted
                 // pose are ready; present() publishes this same root once.
                 attachments.entity("room-front-ui")?.let { scene.attachCatalogue(it,catalogueWidth) }
@@ -290,6 +310,12 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                 attachments.entity("room-journal")?.let { scene.attachJournal(it,journalWidth) }
                 attachments.entity("house-cue")?.let { scene.attachCue(it,cueWidth) }
                 attachments.entity("echo-0")?.let { scene.attachEcho(0,it,echoWidth) }
+                if(scene.isPrepared) {
+                    scene.applyInput(currentRead())
+                    scene.present()
+                    status=SceneStatus.Ready
+                    session.windowReady()
+                } else {
                 scope.launch {
                     try {
                         scene.build(currentGame) {
@@ -301,12 +327,14 @@ private fun RoomSession(game: RoomGame,readGame: ()->RoomGame,send: (RoomAction)
                         withFrameNanos { }
                         scene.present()
                         status=SceneStatus.Ready
+                        session.windowReady()
                     }
                     catch(e: CancellationException) { scene.conceal();throw e }
                     catch(e: Exception) {
                         scene.conceal()
                         Log.e("TidyRoom","scene-load-failed",e);status=SceneStatus.Failed
                     }
+                }
                 }
             },
             update={ _,attachments ->
